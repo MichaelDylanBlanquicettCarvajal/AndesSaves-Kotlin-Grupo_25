@@ -27,6 +27,20 @@
                 android:value="" />
         </activity>
         <activity
+            android:name=".view.SettingActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".view.SummaryActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".view.LoginActivity"
             android:exported="true">
             <intent-filter>
