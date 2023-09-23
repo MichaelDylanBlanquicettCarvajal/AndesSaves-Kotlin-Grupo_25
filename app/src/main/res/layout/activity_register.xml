@@ -41,7 +41,8 @@
         android:layout_height="wrap_content"
         android:hint="Name"
         android:padding="8dp"
-        android:layout_marginBottom="32dp"/>
+        android:layout_marginBottom="32dp"
+        android:inputType="textPersonName"/>
 
     <EditText
         android:id="@+id/editTextPhone"

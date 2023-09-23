@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 
@@ -19,13 +20,38 @@ class RegisterViewModel : ViewModel() {
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> get() = _loading
 
-    fun registerWithEmailAndPassword(email: String, password: String, onHomeSuccess: () -> Unit) {
+    fun registerWithEmailAndPassword(
+        email: String,
+        name: String,
+        phone: String,
+        password: String,
+        confirmPassword: String,
+        onHomeSuccess: () -> Unit
+    ) {
+
+        val intPhone = phone.toIntOrNull()
+
+        if (name.isEmpty() || name.isBlank()) {
+            _errorMessageLiveData.value = "Name cannot be empty"
+            return
+        }
+
+        if (intPhone == null) {
+            _errorMessageLiveData.value = "Phone is not a valid number"
+            return
+        }
+
+        if (password != confirmPassword) {
+            _errorMessageLiveData.value = "Passwords do not match."
+            return
+        }
         viewModelScope.launch {
             try {
                 setLoading(true)
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
+                            createUser(name, intPhone, email)
                             Log.d("Register", "Register Successful")
                             onHomeSuccess()
                         } else {
@@ -48,6 +74,22 @@ class RegisterViewModel : ViewModel() {
                 setLoading(false)
             }
         }
+    }
+
+    private fun createUser(name: String, phone: Int, email: String) {
+        val userId = auth.currentUser?.uid
+        val user = mutableMapOf<String, Any>()
+
+        user["userId"] = userId.toString()
+        user["name"] = name
+        user["phone"] = phone
+        user["email"] = email
+        user["balance"] = 0
+
+        FirebaseFirestore.getInstance().collection("users")
+            .add(user)
+            .addOnSuccessListener { Log.d("Register", "User created success ${it.id}") }
+            .addOnFailureListener { Log.d("Register", "User created failed ${it}") }
     }
 
     private fun setLoading(isLoading: Boolean) {

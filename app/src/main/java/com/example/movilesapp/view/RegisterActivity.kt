@@ -21,7 +21,7 @@ class RegisterActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(RegisterViewModel::class.java)
 
         setupErrorMessageObserver()
-        setupLoginButton()
+        setupRegisterButton()
         setupNavigationLoginLink()
     }
 
@@ -35,7 +35,7 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupLoginButton() {
+    private fun setupRegisterButton() {
         viewModel.loading.observe(this) { isLoading ->
             binding.buttonLogin.isEnabled = !isLoading
             binding.buttonLogin.text = if (isLoading) "Loading..." else "Register"
@@ -43,10 +43,13 @@ class RegisterActivity : AppCompatActivity() {
 
         binding.buttonLogin.setOnClickListener {
             val email = binding.editTextEmail.text.toString()
+            val name = binding.editTextName.text.toString()
+            val phone = binding.editTextPhone.text.toString()
             val password = binding.editTextPassword.text.toString()
+            val confirmationPassword = binding.editTextPasswordConfirm.text.toString()
 
             // Call ViewModel to Login
-            viewModel.registerWithEmailAndPassword(email, password) {
+            viewModel.registerWithEmailAndPassword(email, name, phone, password, confirmationPassword) {
                 val intent = Intent(this, HomeActivity::class.java)
                 startActivity(intent)
             }
