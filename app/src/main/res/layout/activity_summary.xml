@@ -158,7 +158,7 @@
                     android:layout_width="172dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:src="@drawable/Icono_daviplata" />
+                    android:src="@drawable/icono_daviplata" />
 
                 <TextView
                     android:layout_width="314dp"
