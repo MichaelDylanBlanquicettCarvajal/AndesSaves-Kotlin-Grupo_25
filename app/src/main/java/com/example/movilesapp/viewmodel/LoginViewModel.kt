@@ -5,15 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.Dispatchers
+import com.example.movilesapp.model.repositories.AuthRepository
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class LoginViewModel : ViewModel() {
-    private val auth: FirebaseAuth = Firebase.auth
+    private val authRepository = AuthRepository()
 
     private val _errorMessageLiveData = MutableLiveData<String>()
     val errorMessageLiveData: LiveData<String> get() = _errorMessageLiveData
@@ -22,30 +18,36 @@ class LoginViewModel : ViewModel() {
     val loading: LiveData<Boolean> get() = _loading
 
     fun signInWithEmailAndPassword(email: String, password: String, onHomeSuccess: () -> Unit) {
+        _errorMessageLiveData.value = ""
         viewModelScope.launch {
             try {
                 setLoading(true)
-                auth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            Log.d("Login", "Login Successful")
-                            onHomeSuccess()
-                        } else {
-                            Log.d("Login", "Login Fail: ${task.exception?.message}")
-                            _errorMessageLiveData.value = "Invalid Credentials"
+                val (success, errorMessage) = authRepository.signInWithEmailAndPassword(
+                    email,
+                    password
+                )
+                if (success) {
+                    Log.d("Login", "Login Successful")
+                    onHomeSuccess()
+                } else {
+                    Log.d("Login", "Login Failed")
+                    val adjustedErrorMessage = when {
+                        errorMessage?.contains("Given String is empty or null") == true -> {
+                            "The email or password are empty"
+                        }
+                        errorMessage?.contains("INVALID_LOGIN_CREDENTIALS") == true -> {
+                            "Invalid Credentials"
+                        }
+                        else -> {
+                            errorMessage
+                                ?: "Login Failed"
                         }
                     }
+                    _errorMessageLiveData.value = adjustedErrorMessage
+                }
             } catch (ex: Exception) {
                 Log.d("Login", "Error Login: ${ex.message}")
-                val errorMessage = when {
-                    ex.message?.contains("Given String is empty or null") == true -> {
-                        "Email or Password are Empty"
-                    }
-                    else -> {
-                        "An error occurred while logging in"
-                    }
-                }
-                _errorMessageLiveData.value = errorMessage
+                _errorMessageLiveData.value = "An error occurred while logging in"
             } finally {
                 setLoading(false)
             }
