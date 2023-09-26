@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/RelativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/green"
+    tools:context=".view.AddTransactionActivity">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="26dp"
+        android:text="INCOME"
+        android:textColor="#FFFFFF"
+        android:textSize="36sp"
+        android:textStyle="bold" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/textViewTitle"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="-40dp"
+        card_view:cardCornerRadius="40dp"
+        card_view:cardElevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="36dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="TRANSACTION DETAILS"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/editTextName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="26dp"
+                    android:hint="Name"
+                    android:inputType="text"
+                    android:padding="8dp" />
+
+                <EditText
+                    android:id="@+id/editTextAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="26dp"
+                    android:hint="Amount"
+                    android:inputType="numberDecimal"
+                    android:padding="8dp" />
+
+                <EditText
+                    android:id="@+id/editTextSource"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="26dp"
+                    android:hint="Source"
+                    android:inputType="text"
+                    android:padding="8dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="36dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="TYPE"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ToggleButton
+                        android:id="@+id/toggleButtonIncome"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:checked="true"
+                        android:text="Income"
+                        android:textOff="Income"
+                        android:textOn="Income" />
+
+                    <ToggleButton
+                        android:id="@+id/toggleButtonExpense"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:checked="false"
+                        android:text="Expense"
+                        android:textOff="Expense"
+                        android:textOn="Expense" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="145dp">
+
+                <LinearLayout
+                    android:id="@+id/LayoutExpenseCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="36dp"
+                    android:orientation="vertical"
+                    card_view:layout_constraintBottom_toBottomOf="parent"
+                    card_view:layout_constraintEnd_toEndOf="parent"
+                    card_view:layout_constraintStart_toStartOf="parent"
+                    card_view:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:text="EXPENSE CATEGORY"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ToggleButton
+                            android:id="@+id/toggleButtonFood"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:checked="false"
+                            android:text="Food"
+                            android:textOff="Food"
+                            android:textOn="Food"
+                            android:textSize="10sp" />
+
+                        <ToggleButton
+                            android:id="@+id/toggleButtonTransport"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:checked="false"
+                            android:text="Transport"
+                            android:textOff="Transport"
+                            android:textOn="Transport"
+                            android:textSize="10sp" />
+
+                        <ToggleButton
+                            android:id="@+id/toggleButtonHouse"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:checked="false"
+                            android:text="House"
+                            android:textOff="House"
+                            android:textOn="House"
+                            android:textSize="10sp" />
+
+                        <ToggleButton
+                            android:id="@+id/toggleButtonOther"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:checked="true"
+                            android:text="Other"
+                            android:textOff="Other"
+                            android:textOn="Other"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/buttonAddTransaction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="ADD INCOME" />
+
+        </LinearLayout>
+
+
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>

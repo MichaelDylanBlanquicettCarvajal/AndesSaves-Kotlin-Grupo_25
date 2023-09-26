@@ -1,10 +1,10 @@
 package com.example.movilesapp.view
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.movilesapp.databinding.ActivityHistoryBinding
-import com.example.movilesapp.databinding.ActivityHomeBinding
 
 class HistoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHistoryBinding
@@ -12,6 +12,8 @@ class HistoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityHistoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         binding.backButton.setOnClickListener {
             val intent = Intent(this, HomeActivity::class.java)

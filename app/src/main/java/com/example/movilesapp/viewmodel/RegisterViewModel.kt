@@ -10,8 +10,8 @@ import com.example.movilesapp.model.repositories.UserRepository
 import kotlinx.coroutines.launch
 
 class RegisterViewModel : ViewModel() {
-    private val authRepository = AuthRepository()
     private val userRepository = UserRepository()
+    private val authRepository = AuthRepository()
     val errorMessageLiveData = MutableLiveData<String>()
 
     private val _loading = MutableLiveData(false)
@@ -25,14 +25,14 @@ class RegisterViewModel : ViewModel() {
         confirmPassword: String,
         onHomeSuccess: () -> Unit
     ) {
-        val intPhone = phone.toIntOrNull()
+        val numberPhone = phone.toLongOrNull()
 
         if (name.isEmpty() || name.isBlank()) {
             errorMessageLiveData.value = "Name cannot be empty"
             return
         }
 
-        if (intPhone == null) {
+        if (numberPhone == null) {
             errorMessageLiveData.value = "Phone is not a valid number"
             return
         }
@@ -48,7 +48,13 @@ class RegisterViewModel : ViewModel() {
                 val user = authRepository.registerUser(email, password)
                 if (user != null) {
                     val userCreated = userRepository.createUser(
-                        User(userId = user.uid, name = name, phone = intPhone, email = email, balance = 0)
+                        User(
+                            userId = user.uid,
+                            name = name,
+                            phone = numberPhone,
+                            email = email,
+                            balance = 0.0
+                        )
                     )
                     if (userCreated) {
                         onHomeSuccess()
@@ -60,8 +66,7 @@ class RegisterViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 errorMessageLiveData.value = e.message ?: "An error occurred during registration"
-            }
-            finally {
+            } finally {
                 setLoading(false)
             }
         }

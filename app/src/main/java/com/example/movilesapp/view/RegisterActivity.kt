@@ -1,11 +1,12 @@
 package com.example.movilesapp.view
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
+import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivityRegisterBinding
-import com.example.movilesapp.viewmodel.LoginViewModel
 import com.example.movilesapp.viewmodel.RegisterViewModel
 
 class RegisterActivity : AppCompatActivity() {
@@ -17,6 +18,9 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        window.statusBarColor = getColor(R.color.white)
 
         viewModel = ViewModelProvider(this).get(RegisterViewModel::class.java)
 
@@ -49,7 +53,13 @@ class RegisterActivity : AppCompatActivity() {
             val confirmationPassword = binding.editTextPasswordConfirm.text.toString()
 
             // Call ViewModel to Login
-            viewModel.registerWithEmailAndPassword(email, name, phone, password, confirmationPassword) {
+            viewModel.registerWithEmailAndPassword(
+                email,
+                name,
+                phone,
+                password,
+                confirmationPassword
+            ) {
                 val intent = Intent(this, HomeActivity::class.java)
                 startActivity(intent)
             }
