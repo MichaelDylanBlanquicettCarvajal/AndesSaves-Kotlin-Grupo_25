@@ -26,9 +26,20 @@ class AddTransactionActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(AddTransactionViewModel::class.java)
 
         binding.LayoutExpenseCategory.visibility = View.GONE
+        setupErrorMessageObserver()
         setupToggleButtonTypeListeners()
         setupToggleButtonExCategoryListeners()
         setupAddTransactionButton()
+    }
+
+    private fun setupErrorMessageObserver() {
+        viewModel.errorMessageLiveData.observe(this) { errorMessage ->
+            if (errorMessage.isNotEmpty()) {
+                binding.textViewErrorMessage.text = errorMessage
+            } else {
+                binding.textViewErrorMessage.text = ""
+            }
+        }
     }
 
     private fun setupToggleButtonTypeListeners() {
@@ -91,18 +102,11 @@ class AddTransactionActivity : AppCompatActivity() {
     private fun setupAddTransactionButton() {
         binding.buttonAddTransaction.setOnClickListener {
             val name = binding.editTextName.text.toString()
-            val amount = binding.editTextAmount.text.toString().toDouble()
+            val amount = binding.editTextAmount.text.toString()
             val source = binding.editTextSource.text.toString()
 
-            Log.d("Transaction", "Primeros valores ${name} ${amount} ${source}")
-
             val type = if (binding.toggleButtonIncome.isChecked) "Income" else "Expense"
-
-            Log.d("Transaction", "tipo ${type}")
-
             val category = if (type == "Income") "Income" else getCategoryValue()
-
-            Log.d("Transaction", "category ${category}")
 
             viewModel.createTransaction(name, amount, source, type, category) {
                 val intent = Intent(this, HomeActivity::class.java)

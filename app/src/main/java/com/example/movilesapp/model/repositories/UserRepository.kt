@@ -85,21 +85,26 @@ class UserRepository {
         }
     }
 
-    suspend fun getTransactionsByUser(userId: String): List<Transaction> {
+    suspend fun getTransactionsOfUser(): List<Transaction> {
         try {
-            val querySnapshot = db.collection("users")
-                .document(userId)
-                .collection("transactions")
-                .orderBy("transactionId", Query.Direction.DESCENDING)
-                .get()
-                .await()
+            val userId = UserSingleton.getUserInfoSingleton()?.userId
+            if (userId != null) {
+                val querySnapshot = db.collection("users")
+                    .document(userId)
+                    .collection("transactions")
+                    .orderBy("transactionId", Query.Direction.DESCENDING)
+                    .get()
+                    .await()
 
-            val transactions = mutableListOf<Transaction>()
-            for (document in querySnapshot) {
-                val transaction = document.toObject(Transaction::class.java)
-                transactions.add(transaction)
+                val transactions = mutableListOf<Transaction>()
+                for (document in querySnapshot) {
+                    val transaction = document.toObject(Transaction::class.java)
+                    transactions.add(transaction)
+                }
+                return transactions
+            } else {
+                return emptyList()
             }
-            return transactions
         } catch (e: Exception) {
             Log.d("User", "Exception getting user transactions: ${e.message.toString()}")
             return emptyList()
