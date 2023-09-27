@@ -59,8 +59,8 @@ HomeActivity : AppCompatActivity() {
             startActivity(intentSe)
         }
 
-        binding.CardViewSummary.setOnClickListener {
-            val intentSu = Intent(this, SummaryActivity::class.java)
+        binding.CardViewAccount.setOnClickListener {
+            val intentSu = Intent(this, AccountActivity::class.java)
             startActivity(intentSu)
         }
     }

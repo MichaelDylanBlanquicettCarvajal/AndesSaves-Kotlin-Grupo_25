@@ -50,7 +50,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".view.SummaryActivity"
+            android:name=".view.AccountActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
