@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.movilesapp.model.entities.Transaction
 import com.example.movilesapp.model.repositories.UserRepository
+import com.example.movilesapp.model.repositories.implementations.UserRepositoryImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -12,7 +13,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 class AddTransactionViewModel() : ViewModel() {
-    private val userRepository = UserRepository()
+    private val userRepository: UserRepository = UserRepositoryImpl()
 
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> get() = _loading
