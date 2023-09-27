@@ -58,6 +58,12 @@ HomeActivity : AppCompatActivity() {
                 binding.textViewAmount.text = "$0.0 COP"
             }
         }
+
+        if(ThemeUtils.isDarkModeEnabled(this)){
+            changeColorDarkMode()
+        }
+
+        ThemeUtils.checkAndSetNightMode(this)
     }
 
     private fun setupCardViewsNavigation() {
