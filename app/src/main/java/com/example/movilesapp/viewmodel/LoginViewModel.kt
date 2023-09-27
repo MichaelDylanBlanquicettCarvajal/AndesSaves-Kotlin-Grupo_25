@@ -6,9 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movilesapp.model.repositories.AuthRepository
+import com.example.movilesapp.model.repositories.UserRepository
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
+    private val userRepository = UserRepository()
     private val authRepository = AuthRepository()
 
     private val _errorMessageLiveData = MutableLiveData<String>()
@@ -22,24 +24,27 @@ class LoginViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 setLoading(true)
-                val (success, errorMessage) = authRepository.signInWithEmailAndPassword(
+                val (success, message) = authRepository.signInWithEmailAndPassword(
                     email,
                     password
                 )
                 if (success) {
                     Log.d("Login", "Login Successful")
+                    if (message != null) {
+                        val user = userRepository.getUserInformation(message)
+                    }
                     onHomeSuccess()
                 } else {
                     Log.d("Login", "Login Failed")
                     val adjustedErrorMessage = when {
-                        errorMessage?.contains("Given String is empty or null") == true -> {
+                        message?.contains("Given String is empty or null") == true -> {
                             "The email or password are empty"
                         }
-                        errorMessage?.contains("INVALID_LOGIN_CREDENTIALS") == true -> {
+                        message?.contains("INVALID_LOGIN_CREDENTIALS") == true -> {
                             "Invalid Credentials"
                         }
                         else -> {
-                            errorMessage
+                            message
                                 ?: "Login Failed"
                         }
                     }

@@ -1,10 +1,11 @@
 package com.example.movilesapp.view
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.lifecycle.ViewModelProvider
+import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivityLoginBinding
 import com.example.movilesapp.viewmodel.LoginViewModel
 
@@ -16,6 +17,9 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        window.statusBarColor = getColor(R.color.white)
 
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 

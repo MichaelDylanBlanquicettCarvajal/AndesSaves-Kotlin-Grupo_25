@@ -74,7 +74,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="Currency"
-                    android:textColor="#50505050"
+                    android:textColor="@color/dark_gray"
                     android:textSize="20sp"
                     />
 
@@ -111,7 +111,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="Language"
-                    android:textColor="#50505050"
+                    android:textColor="@color/dark_gray"
                     android:textSize="20sp"
                     />
 
@@ -148,7 +148,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="Notifications"
-                    android:textColor="#50505050"
+                    android:textColor="@color/dark_gray"
                     android:textSize="20sp"
                     />
 
