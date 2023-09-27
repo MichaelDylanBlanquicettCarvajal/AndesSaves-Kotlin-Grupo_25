@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivityAddTransactionBinding
 import com.example.movilesapp.model.entities.Transaction
+import com.example.movilesapp.view.utilis.ThemeUtils
 import com.example.movilesapp.viewmodel.RegisterViewModel
 
 class AddTransactionActivity : AppCompatActivity() {
@@ -26,10 +27,20 @@ class AddTransactionActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(AddTransactionViewModel::class.java)
 
         binding.LayoutExpenseCategory.visibility = View.GONE
+        setupBackButton()
         setupErrorMessageObserver()
         setupToggleButtonTypeListeners()
         setupToggleButtonExCategoryListeners()
         setupAddTransactionButton()
+
+        ThemeUtils.checkAndSetNightMode(this)
+    }
+
+    private fun setupBackButton() {
+        binding.backButton.setOnClickListener {
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun setupErrorMessageObserver() {

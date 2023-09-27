@@ -67,6 +67,7 @@
                         card_view:cardElevation="4dp">
 
                         <TextView
+                            android:id="@+id/TextAddTransaction"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="16dp"
@@ -115,6 +116,7 @@
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
+                        android:id="@+id/CardViewBudget"
                         android:layout_width="0dp"
                         android:layout_height="100dp"
                         android:layout_margin="16dp"
@@ -140,6 +142,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/TextHistory"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="105dp"
@@ -148,6 +151,7 @@
                         android:textSize="18sp" />
 
                     <TextView
+                        android:id="@+id/TextBudget"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Budget"
@@ -169,6 +173,7 @@
                     android:orientation="horizontal">
 
                     <androidx.cardview.widget.CardView
+                        android:id="@+id/CardViewTags"
                         android:layout_width="0dp"
                         android:layout_height="100dp"
                         android:layout_margin="16dp"
@@ -214,6 +219,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/TextTags"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="120dp"
@@ -222,6 +228,7 @@
                         android:textSize="18sp" />
 
                     <TextView
+                        android:id="@+id/TextSummary"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Summary"
@@ -243,6 +250,7 @@
                     android:orientation="horizontal">
 
                     <androidx.cardview.widget.CardView
+                        android:id="@+id/CardViewAccounts"
                         android:layout_width="0dp"
                         android:layout_height="100dp"
                         android:layout_margin="16dp"
@@ -288,6 +296,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/TextAccounts"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="100dp"
@@ -296,6 +305,7 @@
                         android:textSize="18sp" />
 
                     <TextView
+                        android:id="@+id/TextSettings"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Settings"

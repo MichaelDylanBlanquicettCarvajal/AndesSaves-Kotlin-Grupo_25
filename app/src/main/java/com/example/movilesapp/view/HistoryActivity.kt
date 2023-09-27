@@ -15,6 +15,7 @@ import androidx.lifecycle.observe
 import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivityHistoryBinding
 import com.example.movilesapp.model.entities.Transaction
+import com.example.movilesapp.view.utilis.ThemeUtils
 import com.example.movilesapp.viewmodel.HistoryViewModel
 import java.text.NumberFormat
 
@@ -30,11 +31,13 @@ class HistoryActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         viewModel = ViewModelProvider(this).get(HistoryViewModel::class.java)
 
-        setupUI()
+        setupBackButton()
         observeViewModel()
+
+        ThemeUtils.checkAndSetNightMode(this)
     }
 
-    private fun setupUI() {
+    private fun setupBackButton() {
         binding.backButton.setOnClickListener {
             val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)

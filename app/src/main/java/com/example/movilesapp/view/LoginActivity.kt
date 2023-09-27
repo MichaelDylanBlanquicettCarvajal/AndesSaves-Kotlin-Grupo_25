@@ -1,12 +1,16 @@
 package com.example.movilesapp.view
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivityLoginBinding
+import com.example.movilesapp.view.utilis.ThemeUtils
 import com.example.movilesapp.viewmodel.LoginViewModel
 
 class LoginActivity : AppCompatActivity() {
@@ -19,13 +23,20 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        window.statusBarColor = getColor(R.color.white)
 
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
         setupErrorMessageObserver()
         setupLoginButton()
         setupNavigationRegisterLink()
+
+
+        if (ThemeUtils.isDarkModeEnabled(this)) {
+            window.statusBarColor = getColor(R.color.black)
+        } else {
+            window.statusBarColor = getColor(R.color.white)
+        }
+        ThemeUtils.checkAndSetNightMode(this)
     }
 
     private fun setupErrorMessageObserver() {
@@ -62,4 +73,5 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
 }
