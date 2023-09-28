@@ -93,7 +93,7 @@ class UserRepositoryImpl : UserRepository {
                 val querySnapshot = db.collection("users")
                     .document(userId)
                     .collection("transactions")
-                    .orderBy("transactionId", Query.Direction.DESCENDING)
+                    .orderBy("date", Query.Direction.DESCENDING)
                     .get()
                     .await()
 

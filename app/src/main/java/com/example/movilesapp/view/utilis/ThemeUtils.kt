@@ -10,10 +10,10 @@ import java.util.Calendar
 object ThemeUtils {
     private var currentNightMode: Int = -1
 
-    fun isNightTime(): Boolean {
+    private fun isNightTime(): Boolean {
         val currentTime = Calendar.getInstance()
         val currentHour = currentTime.get(Calendar.HOUR_OF_DAY)
-        return currentHour >= 12 || currentHour < 6
+        return currentHour >= 18 || currentHour < 6
     }
 
     fun checkAndSetNightMode(context: Context) {

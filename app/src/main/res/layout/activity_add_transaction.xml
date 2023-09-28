@@ -37,6 +37,7 @@
             android:textStyle="bold" />
     </LinearLayout>
 
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -46,6 +47,7 @@
         android:layout_marginBottom="-40dp"
         card_view:cardCornerRadius="40dp"
         card_view:cardElevation="4dp">
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -70,7 +72,7 @@
                     android:id="@+id/editTextName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="26dp"
+                    android:layout_marginBottom="16dp"
                     android:hint="Name"
                     android:inputType="text"
                     android:padding="8dp" />
@@ -79,7 +81,7 @@
                     android:id="@+id/editTextAmount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="26dp"
+                    android:layout_marginBottom="16dp"
                     android:hint="Amount"
                     android:inputType="numberDecimal"
                     android:padding="8dp" />
@@ -88,7 +90,7 @@
                     android:id="@+id/editTextSource"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="26dp"
+                    android:layout_marginBottom="16dp"
                     android:hint="Source"
                     android:inputType="text"
                     android:padding="8dp" />
@@ -108,7 +110,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="36dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -149,13 +150,13 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="145dp">
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:id="@+id/LayoutExpenseCategory"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="36dp"
+                    android:layout_marginTop="16dp"
                     android:orientation="vertical"
                     card_view:layout_constraintBottom_toBottomOf="parent"
                     card_view:layout_constraintEnd_toEndOf="parent"
@@ -184,7 +185,7 @@
                             android:text="Food"
                             android:textOff="Food"
                             android:textOn="Food"
-                            android:textSize="10sp" />
+                            android:textSize="8sp" />
 
                         <ToggleButton
                             android:id="@+id/toggleButtonTransport"
@@ -195,7 +196,7 @@
                             android:text="Transport"
                             android:textOff="Transport"
                             android:textOn="Transport"
-                            android:textSize="10sp" />
+                            android:textSize="8sp" />
 
                         <ToggleButton
                             android:id="@+id/toggleButtonHouse"
@@ -206,7 +207,7 @@
                             android:text="House"
                             android:textOff="House"
                             android:textOn="House"
-                            android:textSize="10sp" />
+                            android:textSize="8sp" />
 
                         <ToggleButton
                             android:id="@+id/toggleButtonOther"
@@ -217,13 +218,29 @@
                             android:text="Other"
                             android:textOff="Other"
                             android:textOn="Other"
-                            android:textSize="10sp" />
+                            android:textSize="8sp" />
                     </LinearLayout>
 
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            >
+
+            <Button
+                android:id="@+id/btnSelectImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:backgroundTint="@color/green"
+                android:text="Take Photo"/>
+
+        </LinearLayout>
 
             <Space
                 android:layout_width="match_parent"
