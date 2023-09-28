@@ -29,6 +29,12 @@ HomeActivity : AppCompatActivity() {
         setupBalanceObserver()
 
         viewModel.getTransactionsOfUser()
+
+        ThemeUtils.checkAndSetNightMode(this)
+        if(ThemeUtils.isDarkModeEnabled(this)){
+            changeColorDarkMode()
+        }
+
     }
 
     private fun setupBalanceObserver() {
@@ -37,18 +43,21 @@ HomeActivity : AppCompatActivity() {
             try {
                 val balanceValue = balance.toDouble()
                 val formattedBalance = numberFormat.format(balanceValue)
-
                 binding.textViewAmount.text = "$$formattedBalance COP"
+
+                if (balanceValue >= 0){
+                    window.statusBarColor = getColor(R.color.green)
+                    binding.backGroundTop.setBackgroundColor(getColor(R.color.green))
+                }
+                else{
+                    window.statusBarColor = getColor(R.color.red)
+                    binding.backGroundTop.setBackgroundColor(getColor(R.color.red))
+                }
+
             } catch (e: NumberFormatException) {
                 binding.textViewAmount.text = "$0.0 COP"
             }
         }
-
-        if(ThemeUtils.isDarkModeEnabled(this)){
-            changeColorDarkMode()
-        }
-
-        ThemeUtils.checkAndSetNightMode(this)
     }
 
     private fun setupCardViewsNavigation() {
