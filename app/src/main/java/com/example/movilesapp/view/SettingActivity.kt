@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.movilesapp.databinding.ActivitySettingsBinding
+import com.example.movilesapp.view.utilis.ThemeUtils
 
 class SettingActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
@@ -19,5 +20,7 @@ class SettingActivity : AppCompatActivity() {
             val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
         }
+
+        ThemeUtils.checkAndSetNightMode(this)
     }
 }

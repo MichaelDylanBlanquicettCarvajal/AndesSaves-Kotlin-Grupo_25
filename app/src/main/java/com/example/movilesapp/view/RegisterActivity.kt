@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivityRegisterBinding
+import com.example.movilesapp.view.utilis.ThemeUtils
 import com.example.movilesapp.viewmodel.RegisterViewModel
 
 class RegisterActivity : AppCompatActivity() {
@@ -20,13 +21,19 @@ class RegisterActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        window.statusBarColor = getColor(R.color.white)
 
         viewModel = ViewModelProvider(this).get(RegisterViewModel::class.java)
 
         setupErrorMessageObserver()
         setupRegisterButton()
         setupNavigationLoginLink()
+
+        if (ThemeUtils.isDarkModeEnabled(this)) {
+            window.statusBarColor = getColor(R.color.black)
+        } else {
+            window.statusBarColor = getColor(R.color.white)
+        }
+        ThemeUtils.checkAndSetNightMode(this)
     }
 
     private fun setupErrorMessageObserver() {

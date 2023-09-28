@@ -3,9 +3,11 @@ package com.example.movilesapp.view
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Typeface
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.marginBottom
@@ -15,7 +17,9 @@ import androidx.lifecycle.observe
 import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivityHistoryBinding
 import com.example.movilesapp.model.entities.Transaction
+import com.example.movilesapp.view.utilis.ThemeUtils
 import com.example.movilesapp.viewmodel.HistoryViewModel
+import java.io.File
 import java.text.NumberFormat
 
 class HistoryActivity : AppCompatActivity() {
@@ -30,11 +34,14 @@ class HistoryActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         viewModel = ViewModelProvider(this).get(HistoryViewModel::class.java)
 
-        setupUI()
+        setupBackButton()
         observeViewModel()
+
+        ThemeUtils.checkAndSetNightMode(this)
+
     }
 
-    private fun setupUI() {
+    private fun setupBackButton() {
         binding.backButton.setOnClickListener {
             val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
@@ -64,6 +71,22 @@ class HistoryActivity : AppCompatActivity() {
             )
             transactionLinearLayout.orientation = LinearLayout.HORIZONTAL
             transactionLinearLayout.gravity = Gravity.CENTER_VERTICAL
+            transactionLinearLayout.id = View.generateViewId()
+
+            transactionLinearLayout.setOnClickListener {
+                if (!transaction.imageUri.isNullOrEmpty()) {
+                    val imageUri = Uri.parse(transaction.imageUri)
+                    val imageFile = File(imageUri.path)
+                    if (imageFile.exists()) {
+                        binding.imageView.setImageURI(imageUri)
+                    } else {
+                        binding.imageView.setImageResource(R.drawable.ic_baseline_image_search_24)
+                    }
+
+                } else {
+                    binding.imageView.setImageResource(R.drawable.ic_baseline_image_search_24)
+                }
+            }
 
             val symbolTextView = when (transaction.type) {
                 "Income" -> {
@@ -129,7 +152,7 @@ class HistoryActivity : AppCompatActivity() {
             nameTextView.textSize = 16f
 
             val dateTextView = TextView(this)
-            dateTextView.text = transaction.date
+            dateTextView.text = transaction.date.toDate().toString()
             dateTextView.textSize = 12f
             dateTextView.setTextColor(resources.getColor(R.color.gray))
 
@@ -141,7 +164,8 @@ class HistoryActivity : AppCompatActivity() {
 
             val amountTextView = TextView(this)
             val formattedAmount = numberFormat.format(transaction.amount)
-            amountTextView.text = "$$formattedAmount"
+            if (transaction.type == "Expense"){amountTextView.text = "- $$formattedAmount"}
+            if (transaction.type == "Income"){amountTextView.text = "$$formattedAmount"}
             amountTextView.textSize = 18f
             amountTextView.gravity = Gravity.CENTER_VERTICAL
 

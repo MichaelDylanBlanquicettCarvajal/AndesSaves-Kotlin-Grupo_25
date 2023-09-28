@@ -7,11 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movilesapp.model.repositories.AuthRepository
 import com.example.movilesapp.model.repositories.UserRepository
+import com.example.movilesapp.model.repositories.implementations.AuthRepositoryImpl
+import com.example.movilesapp.model.repositories.implementations.UserRepositoryImpl
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
-    private val userRepository = UserRepository()
-    private val authRepository = AuthRepository()
+    private val userRepository: UserRepository = UserRepositoryImpl()
+    private val authRepository: AuthRepository = AuthRepositoryImpl()
 
     private val _errorMessageLiveData = MutableLiveData<String>()
     val errorMessageLiveData: LiveData<String> get() = _errorMessageLiveData

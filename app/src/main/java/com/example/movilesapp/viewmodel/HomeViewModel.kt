@@ -7,10 +7,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.movilesapp.model.entities.Transaction
 import com.example.movilesapp.model.repositories.UserRepository
+import com.example.movilesapp.model.repositories.implementations.UserRepositoryImpl
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
-    private val userRepository = UserRepository()
+    private val userRepository: UserRepository = UserRepositoryImpl()
 
     private val _balanceLiveData = MutableLiveData<String>()
     val balanceLiveData: LiveData<String> get() = _balanceLiveData

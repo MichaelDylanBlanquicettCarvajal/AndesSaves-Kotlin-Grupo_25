@@ -1,4 +1,5 @@
 package com.example.movilesapp.model.entities
+import com.google.firebase.Timestamp
 
 data class Transaction (
     val transactionId: String = "",
@@ -7,6 +8,7 @@ data class Transaction (
     val source: String = "",
     val type: String = "", // Income or Expense
     val category: String = "",
-    val date: String = ""
+    val date: Timestamp = Timestamp.now(),
+    val imageUri: String = ""
 )
 
