@@ -1,3 +1,4 @@
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -5,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.movilesapp.model.entities.Transaction
 import com.example.movilesapp.model.repositories.UserRepository
+import com.example.movilesapp.model.repositories.implementations.UserRepositoryImpl
+import com.google.firebase.Timestamp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -12,7 +15,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 class AddTransactionViewModel() : ViewModel() {
-    private val userRepository = UserRepository()
+    private val userRepository: UserRepository = UserRepositoryImpl()
 
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> get() = _loading
@@ -26,6 +29,7 @@ class AddTransactionViewModel() : ViewModel() {
         source: String,
         type: String,
         category: String,
+        imageUri: Uri?,
         onHomeSuccess: () -> Unit
     ) {
         _errorMessageLiveData.value = ""
@@ -34,9 +38,9 @@ class AddTransactionViewModel() : ViewModel() {
             return
         }
 
+        val imageUriString: String = imageUri?.toString() ?: ""
         val amountDouble = amount.toDouble()
-        val sdf = SimpleDateFormat("yyyy-MM-dd")
-        val currentDate = sdf.format(Date())
+
 
         val transaction = Transaction(
             transactionId = "",
@@ -45,7 +49,8 @@ class AddTransactionViewModel() : ViewModel() {
             source = source,
             type = type,
             category = category,
-            date = currentDate
+            date = Timestamp.now(),
+            imageUri = imageUriString
         )
 
         viewModelScope.launch {

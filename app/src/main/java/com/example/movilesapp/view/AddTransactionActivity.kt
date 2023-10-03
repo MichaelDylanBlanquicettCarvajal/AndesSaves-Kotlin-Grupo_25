@@ -1,21 +1,52 @@
 package com.example.movilesapp.view
 
 import AddTransactionViewModel
+import android.Manifest
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivityAddTransactionBinding
-import com.example.movilesapp.model.entities.Transaction
-import com.example.movilesapp.viewmodel.RegisterViewModel
+import com.example.movilesapp.view.utilis.ThemeUtils
+import android.net.Uri
+import android.os.Environment
+import android.provider.MediaStore
+import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+
 
 class AddTransactionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddTransactionBinding
     private lateinit var viewModel: AddTransactionViewModel
+    private var imageUri: Uri? = null
+
+    private val CAMERA_PERMISSION_REQUEST = 100
+
+    private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val data = result.data
+            if (data != null) {
+                val extras = data.extras
+                if (extras != null) {
+                    val imageBitmap = extras.get("data") as Bitmap?
+                    if (imageBitmap != null) {
+                        val imageFile = saveImageToFile(imageBitmap)
+                        imageUri = Uri.fromFile(imageFile)
+                    }
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,10 +57,73 @@ class AddTransactionActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(AddTransactionViewModel::class.java)
 
         binding.LayoutExpenseCategory.visibility = View.GONE
+        setupBackButton()
         setupErrorMessageObserver()
         setupToggleButtonTypeListeners()
         setupToggleButtonExCategoryListeners()
         setupAddTransactionButton()
+        setupSelectImageButton()
+
+        ThemeUtils.checkAndSetNightMode(this)
+
+    }
+
+    private fun saveImageToFile(imageBitmap: Bitmap): File {
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val imageFileName = "JPEG_${System.currentTimeMillis()}.jpg"
+        val imageFile = File(storageDir, imageFileName)
+
+        try {
+            val outputStream = FileOutputStream(imageFile)
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            outputStream.flush()
+            outputStream.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        return imageFile
+    }
+
+    private fun setupSelectImageButton(){
+        binding.btnSelectImage.setOnClickListener {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED
+            ) {
+                openCamera()
+            } else {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.CAMERA),
+                    CAMERA_PERMISSION_REQUEST
+                )
+            }
+        }
+    }
+
+    private fun openCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        takePictureLauncher.launch(intent)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_PERMISSION_REQUEST) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera()
+            }
+        }
+    }
+
+    private fun setupBackButton() {
+        binding.backButton.setOnClickListener {
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun setupErrorMessageObserver() {
@@ -54,6 +148,7 @@ class AddTransactionActivity : AppCompatActivity() {
             binding.buttonAddTransaction.setBackgroundColor(getColor(R.color.green))
             binding.RelativeLayout.setBackgroundColor(getColor(R.color.green))
             window.statusBarColor = getColor(R.color.green)
+            binding.btnSelectImage.setBackgroundColor(getColor(R.color.green))
 
             viewModel.loading.observe(this) { isLoading ->
                 binding.buttonAddTransaction.isEnabled = !isLoading
@@ -72,6 +167,7 @@ class AddTransactionActivity : AppCompatActivity() {
             binding.buttonAddTransaction.setBackgroundColor(getColor(R.color.red))
             binding.RelativeLayout.setBackgroundColor(getColor(R.color.red))
             window.statusBarColor = getColor(R.color.red)
+            binding.btnSelectImage.setBackgroundColor(getColor(R.color.red))
 
             viewModel.loading.observe(this) { isLoading ->
                 binding.buttonAddTransaction.isEnabled = !isLoading
@@ -108,7 +204,7 @@ class AddTransactionActivity : AppCompatActivity() {
             val type = if (binding.toggleButtonIncome.isChecked) "Income" else "Expense"
             val category = if (type == "Income") "Income" else getCategoryValue()
 
-            viewModel.createTransaction(name, amount, source, type, category) {
+            viewModel.createTransaction(name, amount, source, type, category, imageUri) {
                 val intent = Intent(this, HomeActivity::class.java)
                 startActivity(intent)
             }

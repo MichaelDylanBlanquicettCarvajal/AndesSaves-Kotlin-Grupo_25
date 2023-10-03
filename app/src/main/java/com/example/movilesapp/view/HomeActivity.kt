@@ -5,8 +5,10 @@ import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
+import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivityHomeBinding
 import com.example.movilesapp.model.UserSingleton
+import com.example.movilesapp.view.utilis.ThemeUtils
 import com.example.movilesapp.viewmodel.HomeViewModel
 import java.text.NumberFormat
 
@@ -27,6 +29,12 @@ HomeActivity : AppCompatActivity() {
         setupBalanceObserver()
 
         viewModel.getTransactionsOfUser()
+
+        ThemeUtils.checkAndSetNightMode(this)
+        if(ThemeUtils.isDarkModeEnabled(this)){
+            changeColorDarkMode()
+        }
+
     }
 
     private fun setupBalanceObserver() {
@@ -35,8 +43,17 @@ HomeActivity : AppCompatActivity() {
             try {
                 val balanceValue = balance.toDouble()
                 val formattedBalance = numberFormat.format(balanceValue)
-
                 binding.textViewAmount.text = "$$formattedBalance COP"
+
+                if (balanceValue >= 0){
+                    window.statusBarColor = getColor(R.color.green)
+                    binding.backGroundTop.setBackgroundColor(getColor(R.color.green))
+                }
+                else{
+                    window.statusBarColor = getColor(R.color.red)
+                    binding.backGroundTop.setBackgroundColor(getColor(R.color.red))
+                }
+
             } catch (e: NumberFormatException) {
                 binding.textViewAmount.text = "$0.0 COP"
             }
@@ -65,6 +82,22 @@ HomeActivity : AppCompatActivity() {
         }
     }
 
+    private fun changeColorDarkMode(){
+        binding.CardViewHistory.setCardBackgroundColor(getColor(R.color.black))
+        binding.CardViewBudget.setCardBackgroundColor(getColor(R.color.black))
+        binding.CardViewTags.setCardBackgroundColor(getColor(R.color.black))
+        binding.CardViewSummary.setCardBackgroundColor(getColor(R.color.black))
+        binding.CardViewAccounts.setCardBackgroundColor(getColor(R.color.black))
+        binding.CardViewSetting.setCardBackgroundColor(getColor(R.color.black))
+        binding.CardViewAddTransaction.setCardBackgroundColor(getColor(R.color.black))
 
+        binding.TextHistory.setTextColor(getColor(R.color.white))
+        binding.TextBudget.setTextColor(getColor(R.color.white))
+        binding.TextTags.setTextColor(getColor(R.color.white))
+        binding.TextSummary.setTextColor(getColor(R.color.white))
+        binding.TextAccounts.setTextColor(getColor(R.color.white))
+        binding.TextSettings.setTextColor(getColor(R.color.white))
+        binding.TextAddTransaction.setTextColor(getColor(R.color.light_gray))
+    }
 
 }

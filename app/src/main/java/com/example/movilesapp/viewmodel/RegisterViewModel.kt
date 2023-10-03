@@ -7,11 +7,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.movilesapp.model.entities.User
 import com.example.movilesapp.model.repositories.AuthRepository
 import com.example.movilesapp.model.repositories.UserRepository
+import com.example.movilesapp.model.repositories.implementations.AuthRepositoryImpl
+import com.example.movilesapp.model.repositories.implementations.UserRepositoryImpl
 import kotlinx.coroutines.launch
 
 class RegisterViewModel : ViewModel() {
-    private val userRepository = UserRepository()
-    private val authRepository = AuthRepository()
+    private val userRepository: UserRepository = UserRepositoryImpl()
+    private val authRepository: AuthRepository = AuthRepositoryImpl()
     val errorMessageLiveData = MutableLiveData<String>()
 
     private val _loading = MutableLiveData(false)
