@@ -76,7 +76,7 @@ HomeActivity : AppCompatActivity() {
             startActivity(intentSe)
         }
 
-        binding.CardViewAccount.setOnClickListener {
+        binding.CardViewAccounts.setOnClickListener {
             val intentSu = Intent(this, AccountActivity::class.java)
             startActivity(intentSu)
         }
