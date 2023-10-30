@@ -26,31 +26,31 @@ class AddTransactionViewModel() : ViewModel() {
     fun createTransaction(
         name: String,
         amount: String,
-        source: String,
         type: String,
         category: String,
-        imageUri: Uri?,
+        imageUri: String?,
         onHomeSuccess: () -> Unit
     ) {
         _errorMessageLiveData.value = ""
-        if(name.isEmpty() || amount.isEmpty() || source.isEmpty()){
-            _errorMessageLiveData.value = "One of the texts inputs is empty"
+        if (name.isEmpty() || amount.isEmpty()) {
+            _errorMessageLiveData.value = "Name or Amount is empty"
             return
         }
 
-        val imageUriString: String = imageUri?.toString() ?: ""
-        val amountDouble = amount.toDouble()
-
+        val amountDouble = if (type == "Expense") {
+            -amount.toDouble()
+        } else {
+            amount.toDouble()
+        }
 
         val transaction = Transaction(
             transactionId = "",
             name = name,
             amount = amountDouble,
-            source = source,
             type = type,
             category = category,
             date = Timestamp.now(),
-            imageUri = imageUriString
+            imageUri = imageUri?: ""
         )
 
         viewModelScope.launch {

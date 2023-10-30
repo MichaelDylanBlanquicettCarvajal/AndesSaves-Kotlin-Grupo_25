@@ -16,10 +16,12 @@ import com.example.movilesapp.view.utilis.ThemeUtils
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Base64
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -28,7 +30,7 @@ import java.io.IOException
 class AddTransactionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddTransactionBinding
     private lateinit var viewModel: AddTransactionViewModel
-    private var imageUri: Uri? = null
+    private var imageUri: String? = null
 
     private val CAMERA_PERMISSION_REQUEST = 100
 
@@ -40,8 +42,8 @@ class AddTransactionActivity : AppCompatActivity() {
                 if (extras != null) {
                     val imageBitmap = extras.get("data") as Bitmap?
                     if (imageBitmap != null) {
-                        val imageFile = saveImageToFile(imageBitmap)
-                        imageUri = Uri.fromFile(imageFile)
+                        imageUri = bitmapToBase64(imageBitmap)
+                        binding.imageView.setImageBitmap(imageBitmap)
                     }
                 }
             }
@@ -68,21 +70,11 @@ class AddTransactionActivity : AppCompatActivity() {
 
     }
 
-    private fun saveImageToFile(imageBitmap: Bitmap): File {
-        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        val imageFileName = "JPEG_${System.currentTimeMillis()}.jpg"
-        val imageFile = File(storageDir, imageFileName)
-
-        try {
-            val outputStream = FileOutputStream(imageFile)
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-            outputStream.flush()
-            outputStream.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        return imageFile
+    private fun bitmapToBase64(bitmap: Bitmap): String {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+        val byteArray = byteArrayOutputStream.toByteArray()
+        return Base64.encodeToString(byteArray, Base64.DEFAULT)
     }
 
     private fun setupSelectImageButton(){
@@ -191,6 +183,9 @@ class AddTransactionActivity : AppCompatActivity() {
                         otherButton.isChecked = false
                     }
                 }
+                if (!button.isChecked) {
+                    button.isChecked = true
+                }
             }
         }
     }
@@ -199,12 +194,11 @@ class AddTransactionActivity : AppCompatActivity() {
         binding.buttonAddTransaction.setOnClickListener {
             val name = binding.editTextName.text.toString()
             val amount = binding.editTextAmount.text.toString()
-            val source = binding.editTextSource.text.toString()
 
             val type = if (binding.toggleButtonIncome.isChecked) "Income" else "Expense"
             val category = if (type == "Income") "Income" else getCategoryValue()
 
-            viewModel.createTransaction(name, amount, source, type, category, imageUri) {
+            viewModel.createTransaction(name, amount, type, category, imageUri) {
                 val intent = Intent(this, HomeActivity::class.java)
                 startActivity(intent)
             }
