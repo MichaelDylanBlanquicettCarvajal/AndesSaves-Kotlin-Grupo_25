@@ -46,11 +46,39 @@ class SummaryActivity : AppCompatActivity() {
         ThemeUtils.checkAndSetNightMode(this)
 
         viewModel.getTransactionsOfUser()
+        viewModel.getPredictionsOfUser()
         setupIncomeObserver()
         setupExpenseObserver()
         setupDaysObservers()
         setupBarChart()
+        observePredictions()
     }
+
+    private fun observePredictions() {
+        viewModel.allPredictionsLiveData.observe(this) { predictions ->
+            if (predictions.isNotEmpty()) {
+                val mostRecentPrediction = predictions.maxBy { prediction ->
+                    prediction.year * 100 + prediction.month
+                }
+
+                if (mostRecentPrediction != null) {
+                    val formattedPrediction = formatAsMoney(mostRecentPrediction.predicted_expense)
+                    val text = "\$$formattedPrediction"
+                    binding.TextExpensesPrediction.text = text
+                }
+            } else {
+                binding.TextExpensesPrediction.text = "At least 2 months of transactions are required for predictions"
+            }
+        }
+    }
+
+    private fun formatAsMoney(value: Double): String {
+        val numberFormat = NumberFormat.getNumberInstance()
+        numberFormat.maximumFractionDigits = 0
+        return numberFormat.format(value)
+    }
+
+
 
     private fun setupIncomeObserver() {
         viewModel.incomeLiveData.observe(this) { income ->

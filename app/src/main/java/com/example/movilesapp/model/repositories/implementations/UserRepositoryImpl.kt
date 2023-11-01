@@ -5,10 +5,7 @@ import android.net.Uri
 import android.util.Base64
 import android.util.Log
 import com.example.movilesapp.model.UserSingleton
-import com.example.movilesapp.model.entities.Budget
-import com.example.movilesapp.model.entities.Tag
-import com.example.movilesapp.model.entities.Transaction
-import com.example.movilesapp.model.entities.User
+import com.example.movilesapp.model.entities.*
 import com.example.movilesapp.model.repositories.UserRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -305,5 +302,37 @@ class UserRepositoryImpl : UserRepository {
         }
         return false
     }
+
+    override suspend fun getUserPredictions(): List<Prediction> {
+        try {
+            val userId = UserSingleton.getUserInfoSingleton()?.userId
+            if (userId != null) {
+                val querySnapshot = db.collection("users")
+                    .document(userId)
+                    .collection("predictions")
+                    .get()
+                    .await()
+
+                val predictions = mutableListOf<Prediction>()
+                for (document in querySnapshot) {
+                    val predictionData = document.data
+                    val month = (predictionData["month"] as Long).toInt()
+                    val predictedExpense = predictionData["predicted_expense"] as Double
+                    val year = (predictionData["year"] as Long).toInt()
+
+                    val prediction = Prediction(month, predictedExpense, year)
+                    predictions.add(prediction)
+                }
+                return predictions
+            } else {
+                return emptyList()
+            }
+        } catch (e: Exception) {
+            Log.d("User", "Exception getting user predictions: ${e.message.toString()}")
+            return emptyList()
+        }
+    }
+
+
 
 }

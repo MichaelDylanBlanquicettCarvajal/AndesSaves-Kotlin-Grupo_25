@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.movilesapp.model.entities.Prediction
 import com.example.movilesapp.model.entities.Transaction
 import com.example.movilesapp.model.repositories.UserRepository
 import com.example.movilesapp.model.repositories.implementations.UserRepositoryImpl
@@ -32,6 +33,21 @@ class SummaryViewModel : ViewModel() {
 
     private val _allTransactionsLiveData = MutableLiveData<List<Transaction>>()
     val allTransactionsLiveData: LiveData<List<Transaction>> get() = _allTransactionsLiveData
+
+    private val _allPredictionsLiveData = MutableLiveData<List<Prediction>>()
+    val allPredictionsLiveData: LiveData<List<Prediction>> get() = _allPredictionsLiveData
+
+
+    fun getPredictionsOfUser() {
+        viewModelScope.launch {
+            try {
+                val predictions = userRepository.getUserPredictions()
+                _allPredictionsLiveData.postValue(predictions)
+            } catch (e: Exception) {
+                Log.d("Predictions", "Error getting user predictions: ${e.message.toString()}")
+            }
+        }
+    }
 
 
     fun getTransactionsOfUser() {

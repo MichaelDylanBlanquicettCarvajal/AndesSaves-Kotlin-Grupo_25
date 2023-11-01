@@ -1,9 +1,6 @@
 package com.example.movilesapp.model.repositories
 
-import com.example.movilesapp.model.entities.Budget
-import com.example.movilesapp.model.entities.Tag
-import com.example.movilesapp.model.entities.Transaction
-import com.example.movilesapp.model.entities.User
+import com.example.movilesapp.model.entities.*
 
 interface UserRepository {
     suspend fun createUser(user: User): Boolean
@@ -15,4 +12,5 @@ interface UserRepository {
     suspend fun getBudgets(): List<Budget>
     suspend fun updateBudgetContributions(budgetId: String, newContributions: Double): Boolean
     suspend fun deleteBudgetById(budgetId: String): Boolean
+    suspend fun getUserPredictions(): List<Prediction>
 }
