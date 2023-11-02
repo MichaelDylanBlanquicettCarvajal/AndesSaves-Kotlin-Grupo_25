@@ -72,13 +72,28 @@ HomeActivity : AppCompatActivity() {
         }
 
         binding.CardViewSetting.setOnClickListener {
-            val intentSe = Intent(this, SettingActivity::class.java)
-            startActivity(intentSe)
+            val intent = Intent(this, SettingActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.CardViewSummary.setOnClickListener {
+            val intent = Intent(this, SummaryActivity::class.java)
+            startActivity(intent)
         }
 
         binding.CardViewAccounts.setOnClickListener {
-            val intentSu = Intent(this, AccountActivity::class.java)
-            startActivity(intentSu)
+            val intent = Intent(this, AccountsActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.CardViewTags.setOnClickListener {
+            val intent = Intent(this, TagActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.CardViewBudget.setOnClickListener {
+            val intent = Intent(this, BudgetActivity::class.java)
+            startActivity(intent)
         }
     }
 

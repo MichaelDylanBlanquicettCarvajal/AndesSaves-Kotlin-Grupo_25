@@ -28,14 +28,11 @@ class HomeViewModel : ViewModel() {
     }
 
     private fun calculateBalance(transactions: List<Transaction>) {
-        var balance = 0.0
-        for (transaction in transactions) {
-            if (transaction.type == "Income") {
-                balance += transaction.amount
-            } else if (transaction.type == "Expense") {
-                balance -= transaction.amount
-            }
+        val balance = transactions.sumByDouble { transaction ->
+            transaction.amount
         }
         _balanceLiveData.postValue(balance.toString())
     }
+
+
 }

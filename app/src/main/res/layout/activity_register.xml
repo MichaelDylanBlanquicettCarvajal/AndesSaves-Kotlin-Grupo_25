@@ -10,9 +10,9 @@
     tools:context=".view.RegisterActivity">
 
     <ImageView
-        android:layout_width="100dp"
+        android:layout_width="400dp"
         android:layout_height="100dp"
-        android:src="@drawable/ic_launcher_foreground"
+        android:src="@drawable/logo"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="30dp"/>
 
@@ -23,7 +23,7 @@
         android:layout_gravity="center"
         android:text=""
         android:textColor="@color/red"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:layout_marginBottom="16dp"/>
 
     <EditText
@@ -32,7 +32,9 @@
         android:layout_height="wrap_content"
         android:hint="Email"
         android:padding="8dp"
-        android:layout_marginBottom="16dp"
+        android:textSize="22sp"
+        android:maxLength="50"
+        android:layout_marginBottom="18dp"
         android:inputType="textEmailAddress" />
 
     <EditText
@@ -40,8 +42,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Name"
+        android:textSize="22sp"
         android:padding="8dp"
-        android:layout_marginBottom="16dp"
+        android:maxLength="30"
+        android:layout_marginBottom="18dp"
         android:inputType="textPersonName"/>
 
     <EditText
@@ -49,8 +53,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Phone"
+        android:textSize="22sp"
         android:padding="8dp"
-        android:layout_marginBottom="16dp"
+        android:maxLength="10"
+        android:layout_marginBottom="18dp"
         android:inputType="phone"/>
 
     <EditText
@@ -59,8 +65,10 @@
         android:layout_height="wrap_content"
         android:hint="Password"
         android:inputType="textPassword"
+        android:maxLength="32"
+        android:textSize="22sp"
         android:padding="8dp"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="18dp"/>
 
     <EditText
         android:id="@+id/editTextPasswordConfirm"
@@ -68,20 +76,24 @@
         android:layout_height="wrap_content"
         android:hint="Password Confirmation"
         android:inputType="textPassword"
+        android:textSize="22sp"
+        android:maxLength="32"
         android:padding="8dp"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="18dp"/>
 
     <Button
         android:id="@+id/buttonLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="REGISTER"
+        android:textSize="18sp"
         android:layout_marginTop="16dp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:textSize="18sp"
         android:text="Already have an account? Login here."
         android:gravity="center"
         android:id="@+id/textViewLoginLink"/>

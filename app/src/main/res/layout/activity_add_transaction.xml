@@ -75,7 +75,9 @@
                     android:layout_marginBottom="16dp"
                     android:hint="Name"
                     android:inputType="text"
-                    android:padding="8dp" />
+                    android:padding="8dp"
+                    android:maxLength="20"
+                    android:textSize="22sp" />
 
                 <EditText
                     android:id="@+id/editTextAmount"
@@ -84,26 +86,19 @@
                     android:layout_marginBottom="16dp"
                     android:hint="Amount"
                     android:inputType="numberDecimal"
-                    android:padding="8dp" />
-
-                <EditText
-                    android:id="@+id/editTextSource"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:hint="Source"
-                    android:inputType="text"
-                    android:padding="8dp" />
+                    android:maxLength="10"
+                    android:padding="8dp"
+                    android:textSize="22sp" />
 
                 <TextView
                     android:id="@+id/textViewErrorMessage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layout_marginBottom="6dp"
                     android:text=""
                     android:textColor="@color/red"
-                    android:textSize="16sp"
-                    android:layout_marginBottom="16dp"/>
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
@@ -225,22 +220,35 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            >
-
-            <Button
-                android:id="@+id/btnSelectImage"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:backgroundTint="@color/green"
-                android:text="Take Photo"/>
+                android:gravity="center"
+                android:orientation="horizontal">
 
-        </LinearLayout>
+                <Button
+                    android:id="@+id/btnSelectImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:backgroundTint="@color/green"
+                    android:text="Take Photo" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="150dp"
+                    android:layout_height="200dp"
+                    android:src="@drawable/ic_baseline_image_search_24" />
+
+            </LinearLayout>
 
             <Space
                 android:layout_width="match_parent"
