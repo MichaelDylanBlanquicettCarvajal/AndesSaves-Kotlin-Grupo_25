@@ -10,9 +10,9 @@
     tools:context=".view.LoginActivity">
 
     <ImageView
-        android:layout_width="100dp"
+        android:layout_width="400dp"
         android:layout_height="100dp"
-        android:src="@drawable/ic_launcher_foreground"
+        android:src="@drawable/logo"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="100dp"/>
 
@@ -23,7 +23,7 @@
         android:layout_gravity="center"
         android:text=""
         android:textColor="@color/red"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:layout_marginBottom="16dp"/>
 
     <EditText
@@ -32,6 +32,8 @@
         android:layout_height="wrap_content"
         android:hint="Email"
         android:padding="8dp"
+        android:textSize="24sp"
+        android:maxLength="50"
         android:layout_marginBottom="32dp"
         android:inputType="textEmailAddress" />
 
@@ -42,13 +44,16 @@
         android:layout_height="wrap_content"
         android:hint="Password"
         android:inputType="textPassword"
+        android:textSize="24sp"
         android:padding="8dp"
+        android:maxLength="32"
         android:layout_marginBottom="32dp"/>
 
     <Button
         android:id="@+id/buttonLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="18sp"
         android:text="LOGIN"
         android:layout_marginTop="16dp"/>
 
@@ -58,6 +63,7 @@
         android:layout_marginTop="16dp"
         android:text="Don't have an account? Register here."
         android:gravity="center"
+        android:textSize="18sp"
         android:id="@+id/textViewRegisterLink"/>
 
 

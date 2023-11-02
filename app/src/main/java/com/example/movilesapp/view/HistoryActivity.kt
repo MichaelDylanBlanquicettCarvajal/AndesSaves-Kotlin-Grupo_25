@@ -1,26 +1,30 @@
 package com.example.movilesapp.view
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Typeface
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.view.Gravity
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.view.marginBottom
-import androidx.core.view.setMargins
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
+import com.bumptech.glide.Glide
 import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivityHistoryBinding
 import com.example.movilesapp.model.entities.Transaction
 import com.example.movilesapp.view.utilis.ThemeUtils
 import com.example.movilesapp.viewmodel.HistoryViewModel
-import java.io.File
+import com.google.firebase.Timestamp
 import java.text.NumberFormat
+import com.google.firebase.storage.FirebaseStorage
 
 class HistoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHistoryBinding
@@ -74,18 +78,8 @@ class HistoryActivity : AppCompatActivity() {
             transactionLinearLayout.id = View.generateViewId()
 
             transactionLinearLayout.setOnClickListener {
-                if (!transaction.imageUri.isNullOrEmpty()) {
-                    val imageUri = Uri.parse(transaction.imageUri)
-                    val imageFile = File(imageUri.path)
-                    if (imageFile.exists()) {
-                        binding.imageView.setImageURI(imageUri)
-                    } else {
-                        binding.imageView.setImageResource(R.drawable.ic_baseline_image_search_24)
-                    }
 
-                } else {
-                    binding.imageView.setImageResource(R.drawable.ic_baseline_image_search_24)
-                }
+                openDialog(transaction)
             }
 
             val symbolTextView = when (transaction.type) {
@@ -149,7 +143,7 @@ class HistoryActivity : AppCompatActivity() {
 
             val nameTextView = TextView(this)
             nameTextView.text = transaction.name
-            nameTextView.textSize = 16f
+            nameTextView.textSize = 18f
 
             val dateTextView = TextView(this)
             dateTextView.text = transaction.date.toDate().toString()
@@ -164,8 +158,7 @@ class HistoryActivity : AppCompatActivity() {
 
             val amountTextView = TextView(this)
             val formattedAmount = numberFormat.format(transaction.amount)
-            if (transaction.type == "Expense"){amountTextView.text = "- $$formattedAmount"}
-            if (transaction.type == "Income"){amountTextView.text = "$$formattedAmount"}
+            amountTextView.text = "$ $formattedAmount"
             amountTextView.textSize = 18f
             amountTextView.gravity = Gravity.CENTER_VERTICAL
 
@@ -175,11 +168,65 @@ class HistoryActivity : AppCompatActivity() {
         }
     }
 
-
     private fun Int.dpToPx(): Int {
         val scale = resources.displayMetrics.density
         return (this * scale + 0.5f).toInt()
     }
 
 
+
+    private fun openDialog(transaction: Transaction) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_detail_history, null)
+        val builder = AlertDialog.Builder(this)
+        builder.setView(dialogView)
+        val dialog = builder.create()
+
+        val transactionNameTextView = dialogView.findViewById<TextView>(R.id.TransactionName)
+        val transactionAmountTextView = dialogView.findViewById<TextView>(R.id.TransactionAmount)
+        val transactionDateTextView = dialogView.findViewById<TextView>(R.id.TransactionDate)
+        val transactionImageView = dialogView.findViewById<ImageView>(R.id.transactionImageView)
+
+        val formattedAmount = formatAmountAsCurrency(transaction.amount)
+        transactionAmountTextView.text = formattedAmount
+
+        if (transaction.type == "Income") {
+            transactionAmountTextView.setTextColor(ContextCompat.getColor(this, R.color.green))
+        } else {
+            transactionAmountTextView.setTextColor(ContextCompat.getColor(this, R.color.red))
+        }
+
+        val formattedDate = formatTimestampAsDate(transaction.date)
+        transactionDateTextView.text = formattedDate
+
+        transactionNameTextView.text = transaction.name
+
+        val transactionId = transaction.transactionId
+        val storage = FirebaseStorage.getInstance()
+        val storageRef = storage.reference
+        val imageRef = storageRef.child("Transactions/$transactionId.jpg")
+
+        imageRef.downloadUrl.addOnSuccessListener { uri ->
+
+            Glide.with(this /* context */)
+                .load(uri)
+                .into(transactionImageView)
+        }
+
+        dialog.show()
+    }
+
+
+    private fun formatAmountAsCurrency(amount: Double): String {
+        val numberFormat = NumberFormat.getCurrencyInstance()
+        var formattedAmount = numberFormat.format(amount)
+        if (formattedAmount.endsWith(".00")) {
+            formattedAmount = formattedAmount.substring(0, formattedAmount.length - 3)
+        }
+        return formattedAmount
+    }
+
+    private fun formatTimestampAsDate(timestamp: Timestamp): String {
+        val date = timestamp.toDate()
+        return DateUtils.formatDateTime(this, date.time, DateUtils.FORMAT_SHOW_DATE)
+    }
 }

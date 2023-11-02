@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/green"
-    tools:context=".view.AccountActivity">
+    tools:context=".view.AccountsActivity">
 
 
     <LinearLayout
@@ -76,6 +76,7 @@
                 android:layout_height="5dp"/>
 
             <LinearLayout
+                android:id="@+id/Paypal"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:gravity="end"
@@ -101,7 +102,7 @@
 
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="5dp"/>
+                android:layout_height="15dp"/>
             <View
                 android:id="@+id/divider2"
                 android:layout_width="match_parent"
@@ -109,9 +110,10 @@
                 android:background="?android:attr/listDivider" />
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="5dp"/>
+                android:layout_height="15dp"/>
 
             <LinearLayout
+                android:id="@+id/Nequi"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:gravity="end"
@@ -137,7 +139,7 @@
 
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="5dp"/>
+                android:layout_height="15dp"/>
             <View
                 android:id="@+id/divider3"
                 android:layout_width="match_parent"
@@ -145,9 +147,10 @@
                 android:background="?android:attr/listDivider" />
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="5dp"/>
+                android:layout_height="15dp"/>
 
             <LinearLayout
+                android:id="@+id/DaviPlata"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:gravity="end"

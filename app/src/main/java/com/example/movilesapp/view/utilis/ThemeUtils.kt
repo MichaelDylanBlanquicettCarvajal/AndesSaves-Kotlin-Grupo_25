@@ -13,7 +13,7 @@ object ThemeUtils {
     private fun isNightTime(): Boolean {
         val currentTime = Calendar.getInstance()
         val currentHour = currentTime.get(Calendar.HOUR_OF_DAY)
-        return currentHour >= 18 || currentHour < 6
+        return currentHour >= 23 || currentHour < 6
     }
 
     fun checkAndSetNightMode(context: Context) {

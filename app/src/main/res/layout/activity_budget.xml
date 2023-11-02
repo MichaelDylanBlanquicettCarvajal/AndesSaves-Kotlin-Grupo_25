@@ -2,10 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/RelativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/green"
-    tools:context=".view.HistoryActivity">
+    tools:context=".view.BudgetActivity">
+
 
     <LinearLayout
         android:id="@+id/toolbar"
@@ -24,17 +26,18 @@
             card_view:tint="@color/white" />
 
         <TextView
-            android:id="@+id/textViewAmount"
+            android:id="@+id/textViewTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:layout_marginLeft="90dp"
-            android:text="History"
+            android:text="BUDGET"
             android:textColor="#FFFFFF"
             android:textSize="30sp"
             android:textStyle="bold" />
     </LinearLayout>
+
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -46,25 +49,43 @@
         card_view:cardCornerRadius="40dp"
         card_view:cardElevation="4dp">
 
+        <LinearLayout
+             android:layout_margin="36dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnCreateBudget"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/green"
+                android:text="Create" />
+
+        </LinearLayout>
+
         <ScrollView
+            android:layout_marginTop="83dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <LinearLayout
                 android:id="@+id/linearLayoutContainer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="20dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="36dp"
                 android:orientation="vertical">
+
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"/>
 
             </LinearLayout>
         </ScrollView>
 
 
-
-
-
-
     </androidx.cardview.widget.CardView>
-
 </RelativeLayout>
