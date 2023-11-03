@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movilesapp.model.repositories.AuthRepository
 import com.example.movilesapp.model.repositories.implementations.AuthRepositoryImpl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SettingViewModel(context: Context) : ViewModel() {
@@ -15,7 +16,7 @@ class SettingViewModel(context: Context) : ViewModel() {
     val navigateToLoginActivity = MutableLiveData<Boolean>()
 
     fun signOut() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
                 authRepository.signOut()
                 navigateToLoginActivity.value = true

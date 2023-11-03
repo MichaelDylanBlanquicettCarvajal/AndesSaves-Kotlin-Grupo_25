@@ -10,6 +10,7 @@ import com.example.movilesapp.model.repositories.AuthRepository
 import com.example.movilesapp.model.repositories.UserRepository
 import com.example.movilesapp.model.repositories.implementations.AuthRepositoryImpl
 import com.example.movilesapp.model.repositories.implementations.UserRepositoryImpl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class LoginViewModel(context: Context) : ViewModel() {
@@ -24,7 +25,7 @@ class LoginViewModel(context: Context) : ViewModel() {
 
     fun signInWithEmailAndPassword(email: String, password: String, onHomeSuccess: () -> Unit) {
         _errorMessageLiveData.value = ""
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
                 setLoading(true)
                 val (success, message) = authRepository.signInWithEmailAndPassword(

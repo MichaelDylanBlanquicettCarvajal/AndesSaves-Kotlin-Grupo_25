@@ -11,6 +11,7 @@ import com.example.movilesapp.model.entities.Budget
 import com.example.movilesapp.model.repositories.UserRepository
 import com.example.movilesapp.model.repositories.implementations.UserRepositoryImpl
 import com.google.firebase.Timestamp
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class BudgetViewModel(context: Context) : ViewModel() {
@@ -66,7 +67,7 @@ class BudgetViewModel(context: Context) : ViewModel() {
 
         val budget = Budget(userId, name, 0.0, total, type, date)
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 setLoading(true)
                 val isSuccess = userRepository.createBudget(budget)
@@ -86,7 +87,7 @@ class BudgetViewModel(context: Context) : ViewModel() {
     }
 
     fun getBudgets() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
                 val budgets = userRepository.getBudgets()
                 val sortedBudgets = budgets.sortedWith(compareBy<Budget> { it.type }.thenBy { it.date })
@@ -113,7 +114,7 @@ class BudgetViewModel(context: Context) : ViewModel() {
             onBudgetModified(false)
             return
         } else {
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 try {
                     val isSuccess = userRepository.updateBudgetContributions(budget.budgetId, totalContributions)
                     if (isSuccess) {
@@ -132,7 +133,7 @@ class BudgetViewModel(context: Context) : ViewModel() {
 
 
     fun deleteBudgetById(budgetId: String, onBudgetDeleted: (Boolean) -> Unit) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val isSuccess = userRepository.deleteBudgetById(budgetId)
                 if (isSuccess) {

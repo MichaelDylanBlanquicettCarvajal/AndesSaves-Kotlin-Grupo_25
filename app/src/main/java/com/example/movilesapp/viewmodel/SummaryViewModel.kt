@@ -10,6 +10,7 @@ import com.example.movilesapp.model.entities.Prediction
 import com.example.movilesapp.model.entities.Transaction
 import com.example.movilesapp.model.repositories.UserRepository
 import com.example.movilesapp.model.repositories.implementations.UserRepositoryImpl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -40,7 +41,7 @@ class SummaryViewModel(context: Context) : ViewModel() {
 
 
     fun getPredictionsOfUser() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
                 val predictions = userRepository.getUserPredictions()
                 _allPredictionsLiveData.postValue(predictions)
@@ -52,7 +53,7 @@ class SummaryViewModel(context: Context) : ViewModel() {
 
 
     fun getTransactionsOfUser() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
                 val transactions = userRepository.getTransactionsOfUser()
                 _allTransactionsLiveData.postValue(transactions)

@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.movilesapp.model.entities.Transaction
 import com.example.movilesapp.model.repositories.UserRepository
 import com.example.movilesapp.model.repositories.implementations.UserRepositoryImpl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class HomeViewModel(context: Context) : ViewModel() {
@@ -18,7 +19,7 @@ class HomeViewModel(context: Context) : ViewModel() {
     val balanceLiveData: LiveData<String> get() = _balanceLiveData
 
     fun getTransactionsOfUser() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
                 val transactions = userRepository.getTransactionsOfUser()
                 calculateBalance(transactions)

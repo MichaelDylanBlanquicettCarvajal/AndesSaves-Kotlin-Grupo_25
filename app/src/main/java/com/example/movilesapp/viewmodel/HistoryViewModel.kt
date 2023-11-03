@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.movilesapp.model.entities.Transaction
 import com.example.movilesapp.model.repositories.UserRepository
 import com.example.movilesapp.model.repositories.implementations.UserRepositoryImpl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class HistoryViewModel(context: Context) : ViewModel() {
@@ -20,7 +21,7 @@ class HistoryViewModel(context: Context) : ViewModel() {
     val errorMessageLiveData: LiveData<String> get() = _errorMessageLiveData
 
     fun getTransactionsOfUser() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
                 val transactions = userRepository.getTransactionsOfUser()
                 _transactionsLiveData.value = transactions

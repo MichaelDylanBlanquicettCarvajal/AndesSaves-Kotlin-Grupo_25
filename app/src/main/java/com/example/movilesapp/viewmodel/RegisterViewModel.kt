@@ -10,6 +10,7 @@ import com.example.movilesapp.model.repositories.AuthRepository
 import com.example.movilesapp.model.repositories.UserRepository
 import com.example.movilesapp.model.repositories.implementations.AuthRepositoryImpl
 import com.example.movilesapp.model.repositories.implementations.UserRepositoryImpl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class RegisterViewModel(context: Context): ViewModel() {
@@ -45,7 +46,7 @@ class RegisterViewModel(context: Context): ViewModel() {
             return
         }
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
                 setLoading(true)
                 val user = authRepository.registerUser(email, password)

@@ -54,7 +54,7 @@ class AddTransactionViewModel(context: Context) : ViewModel() {
             imageUri = imageUri?: ""
         )
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 setLoading(true)
                 val isSuccess = userRepository.createTransaction(transaction)
@@ -63,7 +63,7 @@ class AddTransactionViewModel(context: Context) : ViewModel() {
                         onHomeSuccess()
                     }
                 } else {
-                    Log.d("Transaction", "Error al crear la transacción")
+                    Log.d("Transaction", "Error Create Transaction")
                 }
             } catch (e: Exception) {
                 Log.d("Transaction", "Exception ${e.message.toString()}")

@@ -29,14 +29,18 @@ HomeActivity : AppCompatActivity() {
         setupCardViewsNavigation()
         setupBalanceObserver()
 
-        viewModel.getTransactionsOfUser()
-
         ThemeUtils.checkAndSetNightMode(this)
         if(ThemeUtils.isDarkModeEnabled(this)){
             changeColorDarkMode()
         }
 
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getTransactionsOfUser()
+    }
+
 
     private fun setupBalanceObserver() {
         viewModel.balanceLiveData.observe(this) { balance ->
