@@ -1,7 +1,8 @@
 package com.example.movilesapp.model.repositories.implementations
 
 import android.content.Context
-import android.net.Uri
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.util.Base64
 import android.util.Log
 import com.example.movilesapp.model.UserSingleton
@@ -14,9 +15,13 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
 import kotlinx.coroutines.tasks.await
 
-class UserRepositoryImpl : UserRepository {
+class UserRepositoryImpl(context: Context) : UserRepository {
 
     private val db = FirebaseFirestore.getInstance()
+
+    // ----------------------------------------
+    // --------------- USER -------------------
+    // ----------------------------------------
 
     override suspend fun createUser(user: User): Boolean {
         try {
@@ -80,35 +85,12 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 
-    private suspend fun saveImageToStorage(base64Image: String, transactionId: String): String? {
-        val storage = FirebaseStorage.getInstance()
-        val storageRef = storage.reference
 
-        val imagesRef = storageRef.child("Transactions/$transactionId.jpg")
 
-        try {
-            val imageBytes = Base64.decode(base64Image, Base64.DEFAULT)
 
-            val uploadTask = imagesRef.putBytes(imageBytes).await()
-
-            try {
-                val downloadUrl = imagesRef.downloadUrl.await()
-                val imageUrl = downloadUrl.toString()
-
-                imagesRef.updateMetadata(
-                    StorageMetadata.Builder()
-                        .setContentType("application/octet-stream")
-                        .build()
-                )
-                return imageUrl
-
-            } catch (e: Exception) {
-                return null
-            }
-        } catch (e: Exception) {
-            return null
-        }
-    }
+    // ----------------------------------------
+    // ------------- TRANSACTIONS -------------
+    // ----------------------------------------
 
     override suspend fun createTransaction(transaction: Transaction): Boolean {
         try {
@@ -169,30 +151,40 @@ class UserRepositoryImpl : UserRepository {
         }
     }
 
-    override suspend fun getUserTags(): List<Tag> {
-        try {
-            val userId = UserSingleton.getUserInfoSingleton()?.userId
-            if (userId != null) {
-                val querySnapshot = db.collection("users")
-                    .document(userId)
-                    .collection("tags")
-                    .get()
-                    .await()
+    private suspend fun saveImageToStorage(base64Image: String, transactionId: String): String? {
+        val storage = FirebaseStorage.getInstance()
+        val storageRef = storage.reference
 
-                val tags = mutableListOf<Tag>()
-                for (document in querySnapshot) {
-                    val tag = document.toObject(Tag::class.java)
-                    tags.add(tag)
-                }
-                return tags
-            } else {
-                return emptyList()
+        val imagesRef = storageRef.child("Transactions/$transactionId.jpg")
+
+        try {
+            val imageBytes = Base64.decode(base64Image, Base64.DEFAULT)
+
+            val uploadTask = imagesRef.putBytes(imageBytes).await()
+
+            try {
+                val downloadUrl = imagesRef.downloadUrl.await()
+                val imageUrl = downloadUrl.toString()
+
+                imagesRef.updateMetadata(
+                    StorageMetadata.Builder()
+                        .setContentType("application/octet-stream")
+                        .build()
+                )
+                return imageUrl
+
+            } catch (e: Exception) {
+                return null
             }
         } catch (e: Exception) {
-            Log.d("User", "Exception getting user tags: ${e.message.toString()}")
-            return emptyList()
+            return null
         }
     }
+
+    // ----------------------------------------
+    // ---------------- BUDGET ----------------
+    // ----------------------------------------
+
 
     override suspend fun createBudget(budget: Budget): Boolean {
         try {
@@ -303,6 +295,10 @@ class UserRepositoryImpl : UserRepository {
         return false
     }
 
+    // ----------------------------------------
+    // ------------- PREDICTIONS --------------
+    // ----------------------------------------
+
     override suspend fun getUserPredictions(): List<Prediction> {
         try {
             val userId = UserSingleton.getUserInfoSingleton()?.userId
@@ -334,5 +330,46 @@ class UserRepositoryImpl : UserRepository {
     }
 
 
+    // ----------------------------------------
+    // ----------------- TAGS -----------------
+    // ----------------------------------------
+
+    override suspend fun getUserTags(): List<Tag> {
+        try {
+            val userId = UserSingleton.getUserInfoSingleton()?.userId
+            if (userId != null) {
+                val querySnapshot = db.collection("users")
+                    .document(userId)
+                    .collection("tags")
+                    .get()
+                    .await()
+
+                val tags = mutableListOf<Tag>()
+                for (document in querySnapshot) {
+                    val tag = document.toObject(Tag::class.java)
+                    tags.add(tag)
+                }
+                return tags
+            } else {
+                return emptyList()
+            }
+        } catch (e: Exception) {
+            Log.d("User", "Exception getting user tags: ${e.message.toString()}")
+            return emptyList()
+        }
+    }
+
+
+    // ----------------------------------------
+    // --------------- INTERNET ---------------
+    // ----------------------------------------
+
+
+    private fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork
+        val capabilities = connectivityManager.getNetworkCapabilities(network)
+        return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+    }
 
 }

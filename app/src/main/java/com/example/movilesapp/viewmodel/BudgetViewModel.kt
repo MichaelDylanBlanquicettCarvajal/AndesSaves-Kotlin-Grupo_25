@@ -1,5 +1,6 @@
 package com.example.movilesapp.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,8 +13,8 @@ import com.example.movilesapp.model.repositories.implementations.UserRepositoryI
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.launch
 
-class BudgetViewModel : ViewModel() {
-    private val userRepository: UserRepository = UserRepositoryImpl()
+class BudgetViewModel(context: Context) : ViewModel() {
+    private val userRepository: UserRepository = UserRepositoryImpl(context)
 
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> get() = _loading

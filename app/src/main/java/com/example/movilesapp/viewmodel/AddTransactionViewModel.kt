@@ -1,3 +1,4 @@
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import android.util.Log
@@ -14,8 +15,8 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class AddTransactionViewModel() : ViewModel() {
-    private val userRepository: UserRepository = UserRepositoryImpl()
+class AddTransactionViewModel(context: Context) : ViewModel() {
+    private val userRepository: UserRepository = UserRepositoryImpl(context)
 
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> get() = _loading

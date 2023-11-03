@@ -1,5 +1,6 @@
 package com.example.movilesapp.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,8 +10,8 @@ import com.example.movilesapp.model.repositories.UserRepository
 import com.example.movilesapp.model.repositories.implementations.UserRepositoryImpl
 import kotlinx.coroutines.launch
 
-class HistoryViewModel : ViewModel() {
-    private val userRepository: UserRepository = UserRepositoryImpl()
+class HistoryViewModel(context: Context) : ViewModel() {
+    private val userRepository: UserRepository = UserRepositoryImpl(context)
 
     private val _transactionsLiveData = MutableLiveData<List<Transaction>>()
     val transactionsLiveData: LiveData<List<Transaction>> get() = _transactionsLiveData

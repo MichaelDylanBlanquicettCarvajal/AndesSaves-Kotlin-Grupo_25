@@ -1,5 +1,6 @@
 package com.example.movilesapp.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,9 +13,9 @@ import com.example.movilesapp.model.repositories.implementations.UserRepositoryI
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
-class SummaryViewModel : ViewModel() {
+class SummaryViewModel(context: Context) : ViewModel() {
 
-    private val userRepository: UserRepository = UserRepositoryImpl()
+    private val userRepository: UserRepository = UserRepositoryImpl(context)
 
     private val _incomeLiveData = MutableLiveData<String>()
     val incomeLiveData: LiveData<String> get() = _incomeLiveData

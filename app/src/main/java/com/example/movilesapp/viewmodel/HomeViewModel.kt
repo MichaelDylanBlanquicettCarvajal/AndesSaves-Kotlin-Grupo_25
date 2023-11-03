@@ -1,5 +1,6 @@
 package com.example.movilesapp.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
@@ -10,8 +11,8 @@ import com.example.movilesapp.model.repositories.UserRepository
 import com.example.movilesapp.model.repositories.implementations.UserRepositoryImpl
 import kotlinx.coroutines.launch
 
-class HomeViewModel : ViewModel() {
-    private val userRepository: UserRepository = UserRepositoryImpl()
+class HomeViewModel(context: Context) : ViewModel() {
+    private val userRepository: UserRepository = UserRepositoryImpl(context)
 
     private val _balanceLiveData = MutableLiveData<String>()
     val balanceLiveData: LiveData<String> get() = _balanceLiveData

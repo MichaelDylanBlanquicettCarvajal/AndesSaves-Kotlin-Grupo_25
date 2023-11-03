@@ -1,5 +1,6 @@
 package com.example.movilesapp.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,7 +9,7 @@ import com.example.movilesapp.model.repositories.AuthRepository
 import com.example.movilesapp.model.repositories.implementations.AuthRepositoryImpl
 import kotlinx.coroutines.launch
 
-class SettingViewModel : ViewModel() {
+class SettingViewModel(context: Context) : ViewModel() {
 
     private val authRepository: AuthRepository = AuthRepositoryImpl()
     val navigateToLoginActivity = MutableLiveData<Boolean>()
