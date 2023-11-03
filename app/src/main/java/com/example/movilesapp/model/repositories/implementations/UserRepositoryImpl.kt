@@ -13,8 +13,12 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
 import kotlinx.coroutines.tasks.await
+import java.io.IOException
+import java.net.SocketException
 
 class UserRepositoryImpl : UserRepository {
+
+    class NetworkException(message: String) : Exception(message)
 
     private val db = FirebaseFirestore.getInstance()
 
@@ -50,9 +54,18 @@ class UserRepositoryImpl : UserRepository {
 
             UserSingleton.saveUserInfoSingleton(user)
             return true
-        } catch (e: Exception) {
+        } catch (e: IOException) {
+            Log.e("Network", "Error de red: ${e.message.toString()}")
+            return false
+
+        } catch (e: SocketException) {
+            Log.e("Network", "Error de socket: ${e.message.toString()}")
+            return false
+
+        }catch (e: Exception) {
             return false
         }
+
     }
 
 
@@ -74,7 +87,15 @@ class UserRepositoryImpl : UserRepository {
             } else {
                 return null
             }
-        } catch (e: Exception) {
+        } catch (e: IOException) {
+            Log.e("Network", "Error de red: ${e.message.toString()}")
+            return null
+
+        } catch (e: SocketException) {
+            Log.e("Network", "Error de socket: ${e.message.toString()}")
+            return null
+
+        }catch (e: Exception) {
             Log.d("User", "Exception user ${e.message.toString()}")
             return null
         }
@@ -105,7 +126,14 @@ class UserRepositoryImpl : UserRepository {
             } catch (e: Exception) {
                 return null
             }
-        } catch (e: Exception) {
+        } catch (e: IOException) {
+            Log.e("Network", "Error de red: ${e.message.toString()}")
+            return null
+
+        } catch (e: SocketException) {
+            Log.e("Network", "Error de socket: ${e.message.toString()}")
+            return null
+        }catch (e: Exception) {
             return null
         }
     }
@@ -136,7 +164,16 @@ class UserRepositoryImpl : UserRepository {
             } else {
                 return false
             }
-        } catch (e: Exception) {
+        }
+        catch (e: IOException) {
+            Log.e("Network", "Error de red: ${e.message.toString()}")
+            return false
+
+        } catch (e: SocketException) {
+            Log.e("Network", "Error de socket: ${e.message.toString()}")
+            return false
+
+        }catch (e: Exception) {
             Log.d("User", "Exception creating transaction: ${e.message.toString()}")
             return false
         }
@@ -163,7 +200,16 @@ class UserRepositoryImpl : UserRepository {
             } else {
                 return emptyList()
             }
-        } catch (e: Exception) {
+        }
+        catch (e: IOException) {
+
+            Log.e("Network", "Error de red: ${e.message.toString()}")
+            return emptyList()
+        } catch (e: SocketException) {
+
+            Log.e("Network", "Error de socket: ${e.message.toString()}")
+            return emptyList()
+        }catch (e: Exception) {
             Log.d("User", "Exception getting user transactions: ${e.message.toString()}")
             return emptyList()
         }
@@ -188,6 +234,15 @@ class UserRepositoryImpl : UserRepository {
             } else {
                 return emptyList()
             }
+        }
+        catch (e: IOException) {
+
+            Log.e("Network", "Error de red: ${e.message.toString()}")
+            return emptyList()
+        } catch (e: SocketException) {
+
+            Log.e("Network", "Error de socket: ${e.message.toString()}")
+            return emptyList()
         } catch (e: Exception) {
             Log.d("User", "Exception getting user tags: ${e.message.toString()}")
             return emptyList()
@@ -217,6 +272,15 @@ class UserRepositoryImpl : UserRepository {
             } else {
                 return false
             }
+        }
+        catch (e: IOException) {
+            Log.e("Network", "Error de red: ${e.message.toString()}")
+            return false
+
+        } catch (e: SocketException) {
+            Log.e("Network", "Error de socket: ${e.message.toString()}")
+            return false
+
         } catch (e: Exception) {
             Log.d("User", "Exception creating budget: ${e.message.toString()}")
             return false
@@ -261,7 +325,16 @@ class UserRepositoryImpl : UserRepository {
             } else {
                 return emptyList()
             }
-        } catch (e: Exception) {
+        }
+        catch (e: IOException) {
+            Log.e("Network", "Error de red: ${e.message.toString()}")
+            return emptyList()
+
+        } catch (e: SocketException) {
+            Log.e("Network", "Error de socket: ${e.message.toString()}")
+            return emptyList()
+
+        }catch (e: Exception) {
             Log.d("User", "Exception getting budgets: ${e.message.toString()}")
             return emptyList()
         }
@@ -279,6 +352,15 @@ class UserRepositoryImpl : UserRepository {
                 budgetRef.update("contributions", newContributions).await()
                 return true
             }
+        }
+        catch (e: IOException) {
+            Log.e("Network", "Error de red: ${e.message.toString()}")
+            return false
+
+        } catch (e: SocketException) {
+            Log.e("Network", "Error de socket: ${e.message.toString()}")
+            return false
+
         } catch (e: Exception) {
             Log.d("User", "Exception updating budget contributions: ${e.message.toString()}")
         }
@@ -297,6 +379,13 @@ class UserRepositoryImpl : UserRepository {
                 budgetRef.delete().await()
                 return true
             }
+        } catch (e: IOException) {
+
+            return false
+            Log.e("Network", "Error de red: ${e.message.toString()}")
+        } catch (e: SocketException) {
+            Log.e("Network", "Error de socket: ${e.message.toString()}")
+            return false
         } catch (e: Exception) {
             Log.d("User", "Exception deleting budget: ${e.message.toString()}")
         }
@@ -327,6 +416,13 @@ class UserRepositoryImpl : UserRepository {
             } else {
                 return emptyList()
             }
+        }
+        catch (e: IOException) {
+            Log.e("Network", "Error de red: ${e.message.toString()}")
+            return emptyList()
+        } catch (e: SocketException) {
+            Log.e("Network", "Error de socket: ${e.message.toString()}")
+            return emptyList()
         } catch (e: Exception) {
             Log.d("User", "Exception getting user predictions: ${e.message.toString()}")
             return emptyList()
