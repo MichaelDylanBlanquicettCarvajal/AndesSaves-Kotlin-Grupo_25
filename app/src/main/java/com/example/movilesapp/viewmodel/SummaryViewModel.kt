@@ -1,5 +1,6 @@
 package com.example.movilesapp.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,12 +10,13 @@ import com.example.movilesapp.model.entities.Prediction
 import com.example.movilesapp.model.entities.Transaction
 import com.example.movilesapp.model.repositories.UserRepository
 import com.example.movilesapp.model.repositories.implementations.UserRepositoryImpl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
-class SummaryViewModel : ViewModel() {
+class SummaryViewModel(context: Context) : ViewModel() {
 
-    private val userRepository: UserRepository = UserRepositoryImpl()
+    private val userRepository: UserRepository = UserRepositoryImpl(context)
 
     private val _incomeLiveData = MutableLiveData<String>()
     val incomeLiveData: LiveData<String> get() = _incomeLiveData
@@ -39,7 +41,7 @@ class SummaryViewModel : ViewModel() {
 
 
     fun getPredictionsOfUser() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
                 val predictions = userRepository.getUserPredictions()
                 _allPredictionsLiveData.postValue(predictions)
@@ -51,7 +53,7 @@ class SummaryViewModel : ViewModel() {
 
 
     fun getTransactionsOfUser() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
                 val transactions = userRepository.getTransactionsOfUser()
                 _allTransactionsLiveData.postValue(transactions)

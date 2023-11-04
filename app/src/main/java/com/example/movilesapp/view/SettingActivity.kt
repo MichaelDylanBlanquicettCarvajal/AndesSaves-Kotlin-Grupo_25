@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.movilesapp.databinding.ActivitySettingsBinding
 import com.example.movilesapp.model.UserSingleton
 import com.example.movilesapp.view.utilis.ThemeUtils
+import com.example.movilesapp.viewmodel.GenericViewModelFactory
 import com.example.movilesapp.viewmodel.SettingViewModel
 
 class SettingActivity : AppCompatActivity() {
@@ -20,7 +21,7 @@ class SettingActivity : AppCompatActivity() {
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
-        viewModel = ViewModelProvider(this).get(SettingViewModel::class.java)
+        viewModel = ViewModelProvider(this, GenericViewModelFactory(this)).get(SettingViewModel::class.java)
 
         binding.backButton.setOnClickListener {
             val intent = Intent(this, HomeActivity::class.java)

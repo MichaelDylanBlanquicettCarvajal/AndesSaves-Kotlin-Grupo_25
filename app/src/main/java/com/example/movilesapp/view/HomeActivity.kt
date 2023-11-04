@@ -9,6 +9,7 @@ import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivityHomeBinding
 import com.example.movilesapp.model.UserSingleton
 import com.example.movilesapp.view.utilis.ThemeUtils
+import com.example.movilesapp.viewmodel.GenericViewModelFactory
 import com.example.movilesapp.viewmodel.HomeViewModel
 import java.text.NumberFormat
 
@@ -23,12 +24,10 @@ HomeActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        viewModel = ViewModelProvider(this, GenericViewModelFactory(this)).get(HomeViewModel::class.java)
 
         setupCardViewsNavigation()
         setupBalanceObserver()
-
-        viewModel.getTransactionsOfUser()
 
         ThemeUtils.checkAndSetNightMode(this)
         if(ThemeUtils.isDarkModeEnabled(this)){
@@ -36,6 +35,13 @@ HomeActivity : AppCompatActivity() {
         }
 
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getTransactionsOfUser()
+        viewModel.saveLocalData()
+    }
+
 
     private fun setupBalanceObserver() {
         viewModel.balanceLiveData.observe(this) { balance ->

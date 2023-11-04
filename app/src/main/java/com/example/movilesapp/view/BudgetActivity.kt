@@ -21,6 +21,7 @@ import com.example.movilesapp.databinding.ActivityBudgetBinding
 import com.example.movilesapp.model.entities.Budget
 import com.example.movilesapp.view.utilis.ThemeUtils
 import com.example.movilesapp.viewmodel.BudgetViewModel
+import com.example.movilesapp.viewmodel.GenericViewModelFactory
 import com.example.movilesapp.viewmodel.HistoryViewModel
 import com.google.firebase.Timestamp
 import java.text.NumberFormat
@@ -38,7 +39,7 @@ class BudgetActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        viewModel = ViewModelProvider(this).get(BudgetViewModel::class.java)
+        viewModel = ViewModelProvider(this, GenericViewModelFactory(this)).get(BudgetViewModel::class.java)
 
         binding.backButton.setOnClickListener {
             val intent = Intent(this, HomeActivity::class.java)
@@ -57,8 +58,13 @@ class BudgetActivity : AppCompatActivity() {
             createBudgetViews(budgets)
         }
 
+        viewModel.loadingMessageLiveData.observe(this) { loadingMessage ->
+            binding.textViewTitle.text = loadingMessage
+        }
+
         viewModel.getBudgets()
     }
+
 
     private fun clearLinearLayout() {
         binding.linearLayoutContainer.removeAllViews()

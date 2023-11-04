@@ -1,5 +1,6 @@
 package com.example.movilesapp.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,11 +10,12 @@ import com.example.movilesapp.model.repositories.AuthRepository
 import com.example.movilesapp.model.repositories.UserRepository
 import com.example.movilesapp.model.repositories.implementations.AuthRepositoryImpl
 import com.example.movilesapp.model.repositories.implementations.UserRepositoryImpl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class RegisterViewModel : ViewModel() {
-    private val userRepository: UserRepository = UserRepositoryImpl()
-    private val authRepository: AuthRepository = AuthRepositoryImpl()
+class RegisterViewModel(context: Context): ViewModel() {
+    private val userRepository: UserRepository = UserRepositoryImpl(context)
+    private val authRepository: AuthRepository = AuthRepositoryImpl(context)
     val errorMessageLiveData = MutableLiveData<String>()
 
     private val _loading = MutableLiveData(false)
@@ -44,7 +46,7 @@ class RegisterViewModel : ViewModel() {
             return
         }
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
                 setLoading(true)
                 val user = authRepository.registerUser(email, password)

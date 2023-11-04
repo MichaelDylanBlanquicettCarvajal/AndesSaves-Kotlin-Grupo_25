@@ -21,6 +21,7 @@ import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.movilesapp.viewmodel.GenericViewModelFactory
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -56,7 +57,7 @@ class AddTransactionActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        viewModel = ViewModelProvider(this).get(AddTransactionViewModel::class.java)
+        viewModel = ViewModelProvider(this, GenericViewModelFactory(this)).get(AddTransactionViewModel::class.java)
 
         binding.LayoutExpenseCategory.visibility = View.GONE
         setupBackButton()
