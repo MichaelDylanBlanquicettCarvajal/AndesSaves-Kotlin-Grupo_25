@@ -29,6 +29,17 @@ class HomeViewModel(context: Context) : ViewModel() {
         }
     }
 
+    fun saveLocalData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                userRepository.getBudgets()
+                userRepository.getUserPredictions()
+            } catch (e: Exception) {
+                Log.d("HOLA", "Error getting budgets or user predictions: ${e.message.toString()}")
+            }
+        }
+    }
+
     private fun calculateBalance(transactions: List<Transaction>) {
         val balance = transactions.sumByDouble { transaction ->
             transaction.amount

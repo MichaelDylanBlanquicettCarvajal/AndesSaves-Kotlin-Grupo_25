@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class SettingViewModel(context: Context) : ViewModel() {
 
-    private val authRepository: AuthRepository = AuthRepositoryImpl()
+    private val authRepository: AuthRepository = AuthRepositoryImpl(context)
     val navigateToLoginActivity = MutableLiveData<Boolean>()
 
     fun signOut() {

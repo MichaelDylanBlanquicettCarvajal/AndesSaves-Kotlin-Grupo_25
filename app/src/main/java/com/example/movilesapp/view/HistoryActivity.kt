@@ -59,6 +59,10 @@ class HistoryActivity : AppCompatActivity() {
             createTransactionViews(transactions)
         }
 
+        viewModel.loadingMessageLiveData.observe(this) { loadingMessage ->
+            binding.textViewTitle.text = loadingMessage
+        }
+
         viewModel.getTransactionsOfUser()
     }
 

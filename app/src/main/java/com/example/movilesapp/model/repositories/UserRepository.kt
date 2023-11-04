@@ -13,4 +13,8 @@ interface UserRepository {
     suspend fun updateBudgetContributions(budgetId: String, newContributions: Double): Boolean
     suspend fun deleteBudgetById(budgetId: String): Boolean
     suspend fun getUserPredictions(): List<Prediction>
+    suspend fun syncTransactionsFirebase()
+    suspend fun syncBudgetsFirebase()
+    suspend fun syncUpdateBudgetsFirebase()
+    suspend fun syncDeleteBudgetsFirebase()
 }

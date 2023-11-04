@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 class RegisterViewModel(context: Context): ViewModel() {
     private val userRepository: UserRepository = UserRepositoryImpl(context)
-    private val authRepository: AuthRepository = AuthRepositoryImpl()
+    private val authRepository: AuthRepository = AuthRepositoryImpl(context)
     val errorMessageLiveData = MutableLiveData<String>()
 
     private val _loading = MutableLiveData(false)

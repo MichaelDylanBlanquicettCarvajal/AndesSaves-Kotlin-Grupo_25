@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 class LoginViewModel(context: Context) : ViewModel() {
     private val userRepository: UserRepository = UserRepositoryImpl(context)
-    private val authRepository: AuthRepository = AuthRepositoryImpl()
+    private val authRepository: AuthRepository = AuthRepositoryImpl(context)
 
     private val _errorMessageLiveData = MutableLiveData<String>()
     val errorMessageLiveData: LiveData<String> get() = _errorMessageLiveData
@@ -35,7 +35,7 @@ class LoginViewModel(context: Context) : ViewModel() {
                 if (success) {
                     Log.d("Login", "Login Successful")
                     if (message != null) {
-                        val user = userRepository.getUserInformation(message)
+                        userRepository.getUserInformation(message)
                     }
                     onHomeSuccess()
                 } else {

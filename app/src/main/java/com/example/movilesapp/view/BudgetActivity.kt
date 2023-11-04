@@ -58,8 +58,13 @@ class BudgetActivity : AppCompatActivity() {
             createBudgetViews(budgets)
         }
 
+        viewModel.loadingMessageLiveData.observe(this) { loadingMessage ->
+            binding.textViewTitle.text = loadingMessage
+        }
+
         viewModel.getBudgets()
     }
+
 
     private fun clearLinearLayout() {
         binding.linearLayoutContainer.removeAllViews()
