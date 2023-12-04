@@ -1,12 +1,9 @@
 package com.example.movilesapp.view
 
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivityLoginBinding
@@ -23,55 +20,45 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
-        setupErrorMessageObserver()
-        setupLoginButton()
-        setupNavigationRegisterLink()
-
-
-        if (ThemeUtils.isDarkModeEnabled(this)) {
-            window.statusBarColor = getColor(R.color.black)
-        } else {
-            window.statusBarColor = getColor(R.color.white)
-        }
+        setupViews()
+        observeErrorMessage()
+        observeLoginButton()
+        setStatusBarColor()
         ThemeUtils.checkAndSetNightMode(this)
     }
 
-    private fun setupErrorMessageObserver() {
-        viewModel.errorMessageLiveData.observe(this) { errorMessage ->
-            if (errorMessage.isNotEmpty()) {
-                binding.textViewErrorMessage.text = errorMessage
-            } else {
-                binding.textViewErrorMessage.text = ""
-            }
-        }
-    }
-
-    private fun setupLoginButton() {
-        viewModel.loading.observe(this) { isLoading ->
-            binding.buttonLogin.isEnabled = !isLoading
-            binding.buttonLogin.text = if (isLoading) "Loading..." else "LogIn"
-        }
-
+    private fun setupViews() {
         binding.buttonLogin.setOnClickListener {
             val email = binding.editTextEmail.text.toString()
             val password = binding.editTextPassword.text.toString()
 
-            // Call ViewModel to Login
             viewModel.signInWithEmailAndPassword(email, password) {
-                val intent = Intent(this, HomeActivity::class.java)
-                startActivity(intent)
+                startActivity(Intent(this, HomeActivity::class.java))
             }
         }
-    }
 
-    private fun setupNavigationRegisterLink() {
         binding.textViewRegisterLink.setOnClickListener {
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
 
+    private fun observeErrorMessage() {
+        viewModel.errorMessageLiveData.observe(this) { errorMessage ->
+            binding.textViewErrorMessage.text = if (errorMessage.isNotEmpty()) errorMessage else ""
+        }
+    }
+
+    private fun observeLoginButton() {
+        viewModel.loading.observe(this) { isLoading ->
+            binding.buttonLogin.isEnabled = !isLoading
+            binding.buttonLogin.text = if (isLoading) "Loading..." else "LogIn"
+        }
+    }
+
+    private fun setStatusBarColor() {
+        val colorRes = if (ThemeUtils.isDarkModeEnabled(this)) R.color.black else R.color.white
+        window.statusBarColor = getColor(colorRes)
+    }
 }

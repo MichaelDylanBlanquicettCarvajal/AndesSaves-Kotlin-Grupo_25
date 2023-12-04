@@ -4,29 +4,21 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Typeface
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
-import android.widget.Button
-import android.widget.DatePicker
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.Space
-import android.widget.TextView
-import android.widget.ToggleButton
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivityBudgetBinding
 import com.example.movilesapp.model.entities.Budget
 import com.example.movilesapp.view.utilis.ThemeUtils
 import com.example.movilesapp.viewmodel.BudgetViewModel
-import com.example.movilesapp.viewmodel.HistoryViewModel
 import com.google.firebase.Timestamp
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
-import java.util.Calendar
-
+import java.util.*
 
 class BudgetActivity : AppCompatActivity() {
     private lateinit var binding: ActivityBudgetBinding
@@ -163,15 +155,12 @@ class BudgetActivity : AppCompatActivity() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_detail_budget, null)
         viewModel.resetErrorMessage()
 
-        // Cambiar el texto de TextViewName con el valor de budget.name
         val nameTextView = dialogView.findViewById<TextView>(R.id.TextViewName)
         nameTextView.text = budget.name
 
-        // Cambiar el texto de TextViewDate con el valor de budget.date
         val dateTextView = dialogView.findViewById<TextView>(R.id.TextViewDate)
         dateTextView.text = formatDate(budget.date)
 
-        // Calcular el porcentaje
         val contributions = budget.contributions
         val total = budget.total
 
@@ -179,20 +168,15 @@ class BudgetActivity : AppCompatActivity() {
             val percentageValue = (contributions / total) * 100
             String.format("%.1f%%", percentageValue)
         } else {
-            "0%" // O un valor predeterminado si el total es cero o negativo
+            "0%"
         }
 
-        // Mostrar el porcentaje en el TextView
         val percentageTextView = dialogView.findViewById<TextView>(R.id.textViewPercentage)
         percentageTextView.text = percentage
 
-
-        // Formatear contributions y total como valores de dinero y mostrarlos en TextViewAvailable
         val availableTextView = dialogView.findViewById<TextView>(R.id.TextViewAvailable)
-
         val contributionsFormatted = formatAsCurrency(budget.contributions)
         val totalFormatted = formatAsCurrency(budget.total)
-
         availableTextView.text = "$contributionsFormatted / $totalFormatted"
 
         val builder = AlertDialog.Builder(this)
@@ -215,7 +199,6 @@ class BudgetActivity : AppCompatActivity() {
                     viewModel.getBudgets()
                     dialog.dismiss()
                 }
-
             }
         }
     }
@@ -227,10 +210,9 @@ class BudgetActivity : AppCompatActivity() {
         buttonAddContribution.setOnClickListener {
             var contributionAmount = 0.0
             if (editTextAmount.text.isNotEmpty()) {
-                if(editTextAmount.text.toString().toDoubleOrNull() != null){
+                if (editTextAmount.text.toString().toDoubleOrNull() != null) {
                     contributionAmount = editTextAmount.text.toString().toDouble()
-                }
-                else{
+                } else {
                     contributionAmount = -1.0
                 }
             }
@@ -240,7 +222,6 @@ class BudgetActivity : AppCompatActivity() {
                     viewModel.getBudgets()
                     dialog.dismiss()
                 }
-
             }
         }
     }
@@ -256,7 +237,6 @@ class BudgetActivity : AppCompatActivity() {
 
         return formattedAmount
     }
-
 
     private fun setUpCreateBudgetButton() {
         binding.btnCreateBudget.setOnClickListener {
@@ -322,7 +302,6 @@ class BudgetActivity : AppCompatActivity() {
 
         buttonCreateBudget.setOnClickListener {
 
-
             val name = if (editTextName.text.isNotEmpty()) {
                 editTextName.text.toString()
             } else {
@@ -366,5 +345,4 @@ class BudgetActivity : AppCompatActivity() {
             }
         }
     }
-
 }

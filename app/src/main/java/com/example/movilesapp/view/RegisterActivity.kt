@@ -2,8 +2,8 @@ package com.example.movilesapp.view
 
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivityRegisterBinding
@@ -14,44 +14,22 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private lateinit var viewModel: RegisterViewModel
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-
         viewModel = ViewModelProvider(this).get(RegisterViewModel::class.java)
 
-        setupErrorMessageObserver()
-        setupRegisterButton()
-        setupNavigationLoginLink()
-
-        if (ThemeUtils.isDarkModeEnabled(this)) {
-            window.statusBarColor = getColor(R.color.black)
-        } else {
-            window.statusBarColor = getColor(R.color.white)
-        }
+        setupViews()
+        observeErrorMessage()
+        observeRegisterButton()
+        setStatusBarColor()
         ThemeUtils.checkAndSetNightMode(this)
     }
 
-    private fun setupErrorMessageObserver() {
-        viewModel.errorMessageLiveData.observe(this) { errorMessage ->
-            if (errorMessage.isNotEmpty()) {
-                binding.textViewErrorMessage.text = errorMessage
-            } else {
-                binding.textViewErrorMessage.text = ""
-            }
-        }
-    }
-
-    private fun setupRegisterButton() {
-        viewModel.loading.observe(this) { isLoading ->
-            binding.buttonLogin.isEnabled = !isLoading
-            binding.buttonLogin.text = if (isLoading) "Loading..." else "Register"
-        }
-
+    private fun setupViews() {
         binding.buttonLogin.setOnClickListener {
             val email = binding.editTextEmail.text.toString()
             val name = binding.editTextName.text.toString()
@@ -59,7 +37,6 @@ class RegisterActivity : AppCompatActivity() {
             val password = binding.editTextPassword.text.toString()
             val confirmationPassword = binding.editTextPasswordConfirm.text.toString()
 
-            // Call ViewModel to Login
             viewModel.registerWithEmailAndPassword(
                 email,
                 name,
@@ -67,16 +44,30 @@ class RegisterActivity : AppCompatActivity() {
                 password,
                 confirmationPassword
             ) {
-                val intent = Intent(this, HomeActivity::class.java)
-                startActivity(intent)
+                startActivity(Intent(this, HomeActivity::class.java))
             }
+        }
+
+        binding.textViewLoginLink.setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
         }
     }
 
-    private fun setupNavigationLoginLink() {
-        binding.textViewLoginLink.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+    private fun observeErrorMessage() {
+        viewModel.errorMessageLiveData.observe(this) { errorMessage ->
+            binding.textViewErrorMessage.text = if (errorMessage.isNotEmpty()) errorMessage else ""
         }
+    }
+
+    private fun observeRegisterButton() {
+        viewModel.loading.observe(this) { isLoading ->
+            binding.buttonLogin.isEnabled = !isLoading
+            binding.buttonLogin.text = if (isLoading) "Loading..." else "Register"
+        }
+    }
+
+    private fun setStatusBarColor() {
+        val colorRes = if (ThemeUtils.isDarkModeEnabled(this)) R.color.black else R.color.white
+        window.statusBarColor = getColor(colorRes)
     }
 }
