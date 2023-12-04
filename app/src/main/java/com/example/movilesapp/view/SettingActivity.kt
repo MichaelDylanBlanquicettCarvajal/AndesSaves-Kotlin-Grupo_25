@@ -24,7 +24,7 @@ class SettingActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, GenericViewModelFactory(this)).get(SettingViewModel::class.java)
 
         binding.backButton.setOnClickListener {
-            val intent = Intent(this, HomeActivity::class.java)
+            val intent = Intent(this, AccountsActivity::class.java)
             startActivity(intent)
         }
 
@@ -33,6 +33,12 @@ class SettingActivity : AppCompatActivity() {
         putNameAndEmailUser()
         navigateToLoginActivity()
         setupLogOutButton()
+
+        binding.CardViewAccounts.setOnClickListener {
+            val intent = Intent(this, AccountsActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     private fun putNameAndEmailUser() {
