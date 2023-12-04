@@ -1,13 +1,17 @@
 package com.example.movilesapp.view
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivityRegisterBinding
 import com.example.movilesapp.view.utilis.ThemeUtils
+import com.example.movilesapp.viewmodel.GenericViewModelFactory
 import com.example.movilesapp.viewmodel.RegisterViewModel
 
 class RegisterActivity : AppCompatActivity() {
@@ -22,7 +26,7 @@ class RegisterActivity : AppCompatActivity() {
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
-        viewModel = ViewModelProvider(this).get(RegisterViewModel::class.java)
+        viewModel = ViewModelProvider(this, GenericViewModelFactory(this)).get(RegisterViewModel::class.java)
 
         setupErrorMessageObserver()
         setupRegisterButton()
@@ -59,16 +63,14 @@ class RegisterActivity : AppCompatActivity() {
             val password = binding.editTextPassword.text.toString()
             val confirmationPassword = binding.editTextPasswordConfirm.text.toString()
 
-            // Call ViewModel to Login
-            viewModel.registerWithEmailAndPassword(
-                email,
-                name,
-                phone,
-                password,
-                confirmationPassword
-            ) {
-                val intent = Intent(this, HomeActivity::class.java)
-                startActivity(intent)
+            if (isNetworkAvailable()) {
+                // Call ViewModel to Register
+                viewModel.registerWithEmailAndPassword(email, name, phone, password, confirmationPassword) {
+                    val intent = Intent(this, HomeActivity::class.java)
+                    startActivity(intent)
+                }
+            } else {
+                binding.textViewErrorMessage.text = "There is no internet connection. Please check your connection"
             }
         }
     }
@@ -78,5 +80,12 @@ class RegisterActivity : AppCompatActivity() {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork
+        val capabilities = connectivityManager.getNetworkCapabilities(network)
+        return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
     }
 }

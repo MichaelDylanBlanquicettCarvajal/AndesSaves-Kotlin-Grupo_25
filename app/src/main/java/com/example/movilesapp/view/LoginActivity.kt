@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
@@ -11,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivityLoginBinding
 import com.example.movilesapp.view.utilis.ThemeUtils
+import com.example.movilesapp.viewmodel.GenericViewModelFactory
 import com.example.movilesapp.viewmodel.LoginViewModel
 
 class LoginActivity : AppCompatActivity() {
@@ -24,7 +27,7 @@ class LoginActivity : AppCompatActivity() {
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
-        viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
+        viewModel = ViewModelProvider(this, GenericViewModelFactory(this)).get(LoginViewModel::class.java)
 
         setupErrorMessageObserver()
         setupLoginButton()
@@ -59,10 +62,14 @@ class LoginActivity : AppCompatActivity() {
             val email = binding.editTextEmail.text.toString()
             val password = binding.editTextPassword.text.toString()
 
-            // Call ViewModel to Login
-            viewModel.signInWithEmailAndPassword(email, password) {
-                val intent = Intent(this, HomeActivity::class.java)
-                startActivity(intent)
+            if (isNetworkAvailable()) {
+                // Call ViewModel to Login
+                viewModel.signInWithEmailAndPassword(email, password) {
+                    val intent = Intent(this, HomeActivity::class.java)
+                    startActivity(intent)
+                }
+            } else {
+                binding.textViewErrorMessage.text = "There is no internet connection. Please check your connection"
             }
         }
     }
@@ -73,5 +80,14 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork
+        val capabilities = connectivityManager.getNetworkCapabilities(network)
+
+        return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+    }
+
 
 }

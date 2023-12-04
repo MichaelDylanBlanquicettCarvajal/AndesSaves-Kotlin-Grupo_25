@@ -1,5 +1,6 @@
 package com.example.movilesapp.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,11 +10,12 @@ import com.example.movilesapp.model.repositories.AuthRepository
 import com.example.movilesapp.model.repositories.UserRepository
 import com.example.movilesapp.model.repositories.implementations.AuthRepositoryImpl
 import com.example.movilesapp.model.repositories.implementations.UserRepositoryImpl
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class LoginViewModel : ViewModel() {
-    private val userRepository: UserRepository = UserRepositoryImpl()
-    private val authRepository: AuthRepository = AuthRepositoryImpl()
+class LoginViewModel(context: Context) : ViewModel() {
+    private val userRepository: UserRepository = UserRepositoryImpl(context)
+    private val authRepository: AuthRepository = AuthRepositoryImpl(context)
 
     private val _errorMessageLiveData = MutableLiveData<String>()
     val errorMessageLiveData: LiveData<String> get() = _errorMessageLiveData
@@ -23,7 +25,7 @@ class LoginViewModel : ViewModel() {
 
     fun signInWithEmailAndPassword(email: String, password: String, onHomeSuccess: () -> Unit) {
         _errorMessageLiveData.value = ""
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
                 setLoading(true)
                 val (success, message) = authRepository.signInWithEmailAndPassword(
@@ -33,7 +35,7 @@ class LoginViewModel : ViewModel() {
                 if (success) {
                     Log.d("Login", "Login Successful")
                     if (message != null) {
-                        val user = userRepository.getUserInformation(message)
+                        userRepository.getUserInformation(message)
                     }
                     onHomeSuccess()
                 } else {
