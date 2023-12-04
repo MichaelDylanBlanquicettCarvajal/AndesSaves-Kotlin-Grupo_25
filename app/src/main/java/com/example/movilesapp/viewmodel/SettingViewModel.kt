@@ -21,9 +21,13 @@ class SettingViewModel(context: Context) : ViewModel() {
                 authRepository.signOut()
                 navigateToLoginActivity.value = true
             } catch (e: Exception) {
-                Log.d("SignOut", "Exception in SignOut" + e.message.toString())
+                handleSignOutException(e)
             }
         }
     }
 
+    private fun handleSignOutException(exception: Exception) {
+        Log.d("SignOut", "Exception in SignOut: ${exception.message}")
+        // Handle the exception as needed
+    }
 }

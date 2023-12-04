@@ -17,7 +17,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class BudgetViewModel(private val context: Context) : ViewModel() {
-    private val userRepository: UserRepository = UserRepositoryImpl(context)
+
+    private val userRepository: UserRepository = UserRepositoryImpl()
 
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> get() = _loading
@@ -31,7 +32,6 @@ class BudgetViewModel(private val context: Context) : ViewModel() {
     private val _budgetsLiveData = MutableLiveData<List<Budget>>()
     val budgetsLiveData: LiveData<List<Budget>> get() = _budgetsLiveData
 
-
     fun createBudget(
         name: String,
         total: Double,
@@ -44,29 +44,13 @@ class BudgetViewModel(private val context: Context) : ViewModel() {
 
         _errorMessageLiveData.value = ""
 
-        if (name.isEmpty()) {
-            _errorMessageLiveData.value = "Name is empty"
-            onBudgetCreated(false)
+        if (name.isEmpty() || total == 0.0 || total < 0.0) {
+            handleInvalidInput("Name is empty or Amount is not a valid number", onBudgetCreated)
             return
         }
 
-        if (total == 0.0) {
-            _errorMessageLiveData.value = "Amount is Empty"
-            onBudgetCreated(false)
-            return
-        }
-
-        if (total < 0.0) {
-            _errorMessageLiveData.value = "Amount is not a Valid Number"
-            onBudgetCreated(false)
-            return
-        }
-
-        val currentTime = Timestamp.now()
-
-        if (date.seconds < currentTime.seconds) {
-            _errorMessageLiveData.value = "Please select a Future Date"
-            onBudgetCreated(false)
+        if (date.seconds < Timestamp.now().seconds) {
+            handleInvalidInput("Please select a future date", onBudgetCreated)
             return
         }
 
@@ -76,15 +60,9 @@ class BudgetViewModel(private val context: Context) : ViewModel() {
             try {
                 setLoading(true)
                 val isSuccess = userRepository.createBudget(budget)
-                if (isSuccess) {
-                    onBudgetCreated(true)
-                } else {
-                    Log.d("Budget", "Error al crear el presupuesto")
-                    onBudgetCreated(false)
-                }
+                handleOperationResult(isSuccess, onBudgetCreated)
             } catch (e: Exception) {
-                Log.d("Budget", "Exception ${e.message.toString()}")
-                onBudgetCreated(false) // Llamar el callback con false en caso de excepción
+                handleException(e, onBudgetCreated)
             } finally {
                 setLoading(false)
             }
@@ -95,11 +73,7 @@ class BudgetViewModel(private val context: Context) : ViewModel() {
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 if (isNetworkAvailable()) {
-                    _loadingMessageLiveData.value = "Loading..."
-                    userRepository.syncDeleteBudgetsFirebase()
-                    userRepository.syncBudgetsFirebase()
-                    userRepository.syncUpdateBudgetsFirebase()
-
+                    syncBudgetData()
                 }
 
                 val budgets = userRepository.getBudgets()
@@ -120,59 +94,56 @@ class BudgetViewModel(private val context: Context) : ViewModel() {
     ) {
         val totalContributions = budget.contributions + newContributions
 
-        if (totalContributions > budget.total) {
-            _errorMessageLiveData.value =
-                "Total contributions cannot exceed the total budget amount."
-            onBudgetModified(false)
+        if (totalContributions > budget.total || newContributions == 0.0 || newContributions < 0.0) {
+            handleInvalidInput("Invalid contribution amount", onBudgetModified)
             return
-        } else if (newContributions == 0.0) {
-            _errorMessageLiveData.value = "Amount is empty or 0"
-            onBudgetModified(false)
-            return
-        } else if (newContributions < 0.0) {
-            _errorMessageLiveData.value = "Amount is not a Valid Number"
-            onBudgetModified(false)
-            return
-        } else {
-            viewModelScope.launch(Dispatchers.IO) {
-                try {
-                    val isSuccess = userRepository.updateBudgetContributions(
-                        budget.budgetId,
-                        totalContributions
-                    )
-                    if (isSuccess) {
-                        onBudgetModified(true)
-                    } else {
-                        _errorMessageLiveData.value = "Error updating budget contributions."
-                        onBudgetModified(false)
-                    }
-                } catch (e: Exception) {
-                    _errorMessageLiveData.value =
-                        "Error updating budget contributions: ${e.message.toString()}"
-                    onBudgetModified(false)
-                }
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val isSuccess = userRepository.updateBudgetContributions(
+                    budget.budgetId,
+                    totalContributions
+                )
+                handleOperationResult(isSuccess, onBudgetModified)
+            } catch (e: Exception) {
+                handleException(e, onBudgetModified)
             }
         }
     }
-
 
     fun deleteBudgetById(budgetId: String, onBudgetDeleted: (Boolean) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val isSuccess = userRepository.deleteBudgetById(budgetId)
-                if (isSuccess) {
-                    onBudgetDeleted(true)
-                } else {
-                    _errorMessageLiveData.value = "Error deleting budget."
-                }
+                handleOperationResult(isSuccess, onBudgetDeleted)
             } catch (e: Exception) {
-                _errorMessageLiveData.value = "Error deleting budget: ${e.message.toString()}"
+                handleException(e, onBudgetDeleted)
             }
         }
     }
 
     fun resetErrorMessage() {
         _errorMessageLiveData.value = ""
+    }
+
+    private fun handleInvalidInput(message: String, callback: (Boolean) -> Unit) {
+        _errorMessageLiveData.value = message
+        callback(false)
+    }
+
+    private fun handleOperationResult(isSuccess: Boolean, callback: (Boolean) -> Unit) {
+        if (isSuccess) {
+            callback(true)
+        } else {
+            _errorMessageLiveData.value = "Error during operation"
+            callback(false)
+        }
+    }
+
+    private fun handleException(e: Exception, callback: (Boolean) -> Unit) {
+        _errorMessageLiveData.value = "Exception ${e.message.toString()}"
+        callback(false)
     }
 
     private fun setLoading(isLoading: Boolean) {
@@ -185,5 +156,12 @@ class BudgetViewModel(private val context: Context) : ViewModel() {
         val network = connectivityManager.activeNetwork
         val capabilities = connectivityManager.getNetworkCapabilities(network)
         return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+    }
+
+    private suspend fun syncBudgetData() {
+        _loadingMessageLiveData.value = "Loading..."
+        userRepository.syncDeleteBudgetsFirebase()
+        userRepository.syncBudgetsFirebase()
+        userRepository.syncUpdateBudgetsFirebase()
     }
 }

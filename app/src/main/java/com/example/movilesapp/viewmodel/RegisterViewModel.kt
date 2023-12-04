@@ -10,12 +10,15 @@ import com.example.movilesapp.model.repositories.AuthRepository
 import com.example.movilesapp.model.repositories.UserRepository
 import com.example.movilesapp.model.repositories.implementations.AuthRepositoryImpl
 import com.example.movilesapp.model.repositories.implementations.UserRepositoryImpl
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class RegisterViewModel(context: Context): ViewModel() {
-    private val userRepository: UserRepository = UserRepositoryImpl(context)
+class RegisterViewModel(context: Context) : ViewModel() {
+
+    private val userRepository: UserRepository = UserRepositoryImpl()
     private val authRepository: AuthRepository = AuthRepositoryImpl(context)
+
     val errorMessageLiveData = MutableLiveData<String>()
 
     private val _loading = MutableLiveData(false)
@@ -31,18 +34,18 @@ class RegisterViewModel(context: Context): ViewModel() {
     ) {
         val numberPhone = phone.toLongOrNull()
 
-        if (name.isEmpty() || name.isBlank()) {
-            errorMessageLiveData.value = "Name cannot be empty"
+        if (name.isEmpty()) {
+            handleValidationError("Name cannot be empty")
             return
         }
 
         if (numberPhone == null) {
-            errorMessageLiveData.value = "Phone is not a valid number"
+            handleValidationError("Phone is not a valid number")
             return
         }
 
         if (password != confirmPassword) {
-            errorMessageLiveData.value = "Passwords do not match."
+            handleValidationError("Passwords do not match.")
             return
         }
 
@@ -51,29 +54,47 @@ class RegisterViewModel(context: Context): ViewModel() {
                 setLoading(true)
                 val user = authRepository.registerUser(email, password)
                 if (user != null) {
-                    val userCreated = userRepository.createUser(
-                        User(
-                            userId = user.uid,
-                            name = name,
-                            phone = numberPhone,
-                            email = email,
-                            balance = 0.0
-                        )
-                    )
-                    if (userCreated) {
-                        onHomeSuccess()
-                    } else {
-                        errorMessageLiveData.value = "Failed to create user data"
-                    }
+                    createUserAndNavigateToHome(user, name, numberPhone, email, onHomeSuccess)
                 } else {
-                    errorMessageLiveData.value = "Registration failed"
+                    handleRegistrationFailure("Registration failed")
                 }
             } catch (e: Exception) {
-                errorMessageLiveData.value = e.message ?: "An error occurred during registration"
+                handleRegistrationFailure(e.message ?: "An error occurred during registration")
             } finally {
                 setLoading(false)
             }
         }
+    }
+
+    private suspend fun createUserAndNavigateToHome(
+        user: FirebaseUser,
+        name: String,
+        numberPhone: Long,
+        email: String,
+        onHomeSuccess: () -> Unit
+    ) {
+        val userCreated = userRepository.createUser(
+            User(
+                userId = user.uid,
+                name = name,
+                phone = numberPhone,
+                email = email,
+                balance = 0.0
+            )
+        )
+        if (userCreated) {
+            onHomeSuccess()
+        } else {
+            handleRegistrationFailure("Failed to create user data")
+        }
+    }
+
+    private fun handleValidationError(message: String) {
+        errorMessageLiveData.value = message
+    }
+
+    private fun handleRegistrationFailure(message: String) {
+        errorMessageLiveData.value = message
     }
 
     private fun setLoading(isLoading: Boolean) {

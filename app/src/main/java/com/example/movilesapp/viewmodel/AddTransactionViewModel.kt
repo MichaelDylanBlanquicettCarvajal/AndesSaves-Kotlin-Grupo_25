@@ -1,4 +1,3 @@
-import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import android.util.Log
@@ -15,10 +14,11 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class AddTransactionViewModel(context: Context) : ViewModel() {
-    private val userRepository: UserRepository = UserRepositoryImpl(context)
+class AddTransactionViewModel : ViewModel() {
 
-    private val _loading = MutableLiveData(false)
+    private val userRepository: UserRepository = UserRepositoryImpl()
+
+    private val _loading = MutableLiveData<Boolean>(false)
     val loading: LiveData<Boolean> get() = _loading
 
     private val _errorMessageLiveData = MutableLiveData<String>()
@@ -33,6 +33,7 @@ class AddTransactionViewModel(context: Context) : ViewModel() {
         onHomeSuccess: () -> Unit
     ) {
         _errorMessageLiveData.value = ""
+
         if (name.isEmpty() || amount.isEmpty()) {
             _errorMessageLiveData.value = "Name or Amount is empty"
             return
@@ -51,10 +52,10 @@ class AddTransactionViewModel(context: Context) : ViewModel() {
             type = type,
             category = category,
             date = Timestamp.now(),
-            imageUri = imageUri?: ""
+            imageUri = imageUri ?: ""
         )
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             try {
                 setLoading(true)
                 val isSuccess = userRepository.createTransaction(transaction)
@@ -63,7 +64,7 @@ class AddTransactionViewModel(context: Context) : ViewModel() {
                         onHomeSuccess()
                     }
                 } else {
-                    Log.d("Transaction", "Error Create Transaction")
+                    Log.d("Transaction", "Error al crear la transacción")
                 }
             } catch (e: Exception) {
                 Log.d("Transaction", "Exception ${e.message.toString()}")
