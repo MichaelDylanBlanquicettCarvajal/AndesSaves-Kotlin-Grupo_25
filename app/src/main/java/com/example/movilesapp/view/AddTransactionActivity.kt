@@ -6,27 +6,18 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Base64
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivityAddTransactionBinding
 import com.example.movilesapp.view.utilis.ThemeUtils
-import android.net.Uri
-import android.os.Environment
-import android.provider.MediaStore
-import android.util.Base64
-import android.util.Log
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.example.movilesapp.viewmodel.GenericViewModelFactory
 import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-
 
 class AddTransactionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddTransactionBinding
@@ -37,16 +28,9 @@ class AddTransactionActivity : AppCompatActivity() {
 
     private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
-            val data = result.data
-            if (data != null) {
-                val extras = data.extras
-                if (extras != null) {
-                    val imageBitmap = extras.get("data") as Bitmap?
-                    if (imageBitmap != null) {
-                        imageUri = bitmapToBase64(imageBitmap)
-                        binding.imageView.setImageBitmap(imageBitmap)
-                    }
-                }
+            result.data?.extras?.get("data")?.let { imageBitmap ->
+                imageUri = bitmapToBase64(imageBitmap as Bitmap)
+                binding.imageView.setImageBitmap(imageBitmap)
             }
         }
     }
@@ -57,7 +41,7 @@ class AddTransactionActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        viewModel = ViewModelProvider(this, GenericViewModelFactory(this)).get(AddTransactionViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(AddTransactionViewModel::class.java)
 
         binding.LayoutExpenseCategory.visibility = View.GONE
         setupBackButton()
@@ -68,48 +52,34 @@ class AddTransactionActivity : AppCompatActivity() {
         setupSelectImageButton()
 
         ThemeUtils.checkAndSetNightMode(this)
-
     }
 
     private fun bitmapToBase64(bitmap: Bitmap): String {
         val byteArrayOutputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
-        val byteArray = byteArrayOutputStream.toByteArray()
-        return Base64.encodeToString(byteArray, Base64.DEFAULT)
+        return Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT)
     }
 
-    private fun setupSelectImageButton(){
+    private fun setupSelectImageButton() {
         binding.btnSelectImage.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED
-            ) {
+            if (hasCameraPermission()) {
                 openCamera()
             } else {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.CAMERA),
-                    CAMERA_PERMISSION_REQUEST
-                )
+                requestCameraPermission()
             }
         }
+    }
+
+    private fun hasCameraPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestCameraPermission() {
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), CAMERA_PERMISSION_REQUEST)
     }
 
     private fun openCamera() {
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        takePictureLauncher.launch(intent)
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == CAMERA_PERMISSION_REQUEST) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openCamera()
-            }
-        }
+        takePictureLauncher.launch(Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE))
     }
 
     private fun setupBackButton() {
@@ -121,51 +91,37 @@ class AddTransactionActivity : AppCompatActivity() {
 
     private fun setupErrorMessageObserver() {
         viewModel.errorMessageLiveData.observe(this) { errorMessage ->
-            if (errorMessage.isNotEmpty()) {
-                binding.textViewErrorMessage.text = errorMessage
-            } else {
-                binding.textViewErrorMessage.text = ""
-            }
+            binding.textViewErrorMessage.text = if (errorMessage.isNotEmpty()) errorMessage else ""
         }
     }
 
     private fun setupToggleButtonTypeListeners() {
-        binding.toggleButtonIncome.setOnClickListener {
-            if (!binding.toggleButtonIncome.isChecked) {
-                binding.toggleButtonIncome.isChecked = true
-            }
-            binding.toggleButtonExpense.isChecked = false
-            binding.LayoutExpenseCategory.visibility = View.GONE
+        val greenColor = getColor(R.color.green)
+        val redColor = getColor(R.color.red)
 
-            binding.textViewTitle.text = "INCOME"
-            binding.buttonAddTransaction.setBackgroundColor(getColor(R.color.green))
-            binding.RelativeLayout.setBackgroundColor(getColor(R.color.green))
-            window.statusBarColor = getColor(R.color.green)
-            binding.btnSelectImage.setBackgroundColor(getColor(R.color.green))
+        binding.toggleButtonIncome.setOnClickListener { toggleButtonListener(greenColor, "INCOME") }
+        binding.toggleButtonExpense.setOnClickListener { toggleButtonListener(redColor, "EXPENSE") }
+    }
 
-            viewModel.loading.observe(this) { isLoading ->
-                binding.buttonAddTransaction.isEnabled = !isLoading
-                binding.buttonAddTransaction.text = if (isLoading) "Loading..." else "ADD INCOME"
-            }
+    private fun toggleButtonListener(color: Int, title: String) {
+        val toggleButton = if (title == "INCOME") binding.toggleButtonIncome else binding.toggleButtonExpense
+        val otherToggleButton = if (title == "INCOME") binding.toggleButtonExpense else binding.toggleButtonIncome
+
+        if (!toggleButton.isChecked) {
+            toggleButton.isChecked = true
         }
+        otherToggleButton.isChecked = false
+        binding.LayoutExpenseCategory.visibility = if (title == "EXPENSE") View.VISIBLE else View.GONE
 
-        binding.toggleButtonExpense.setOnClickListener {
-            if (!binding.toggleButtonExpense.isChecked) {
-                binding.toggleButtonExpense.isChecked = true
-            }
-            binding.toggleButtonIncome.isChecked = false
-            binding.LayoutExpenseCategory.visibility = View.VISIBLE
+        binding.textViewTitle.text = title
+        binding.buttonAddTransaction.setBackgroundColor(color)
+        binding.RelativeLayout.setBackgroundColor(color)
+        window.statusBarColor = color
+        binding.btnSelectImage.setBackgroundColor(color)
 
-            binding.textViewTitle.text = "EXPENSE"
-            binding.buttonAddTransaction.setBackgroundColor(getColor(R.color.red))
-            binding.RelativeLayout.setBackgroundColor(getColor(R.color.red))
-            window.statusBarColor = getColor(R.color.red)
-            binding.btnSelectImage.setBackgroundColor(getColor(R.color.red))
-
-            viewModel.loading.observe(this) { isLoading ->
-                binding.buttonAddTransaction.isEnabled = !isLoading
-                binding.buttonAddTransaction.text = if (isLoading) "Loading..." else "ADD EXPENSE"
-            }
+        viewModel.loading.observe(this) { isLoading ->
+            binding.buttonAddTransaction.isEnabled = !isLoading
+            binding.buttonAddTransaction.text = if (isLoading) "Loading..." else "ADD $title"
         }
     }
 
@@ -200,8 +156,7 @@ class AddTransactionActivity : AppCompatActivity() {
             val category = if (type == "Income") "Income" else getCategoryValue()
 
             viewModel.createTransaction(name, amount, type, category, imageUri) {
-                val intent = Intent(this, HomeActivity::class.java)
-                startActivity(intent)
+                startActivity(Intent(this, HomeActivity::class.java))
             }
         }
     }
@@ -214,5 +169,4 @@ class AddTransactionActivity : AppCompatActivity() {
             else -> "Other"
         }
     }
-
 }

@@ -16,7 +16,7 @@ import java.util.Calendar
 
 class SummaryViewModel(context: Context) : ViewModel() {
 
-    private val userRepository: UserRepository = UserRepositoryImpl(context)
+    private val userRepository: UserRepository = UserRepositoryImpl()
 
     private val _incomeLiveData = MutableLiveData<String>()
     val incomeLiveData: LiveData<String> get() = _incomeLiveData
@@ -39,47 +39,36 @@ class SummaryViewModel(context: Context) : ViewModel() {
     private val _allPredictionsLiveData = MutableLiveData<List<Prediction>>()
     val allPredictionsLiveData: LiveData<List<Prediction>> get() = _allPredictionsLiveData
 
-
     fun getPredictionsOfUser() {
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 val predictions = userRepository.getUserPredictions()
                 _allPredictionsLiveData.postValue(predictions)
             } catch (e: Exception) {
-                Log.d("Predictions", "Error getting user predictions: ${e.message.toString()}")
+                handleException("Predictions", "Error getting user predictions", e)
             }
         }
     }
-
 
     fun getTransactionsOfUser() {
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 val transactions = userRepository.getTransactionsOfUser()
                 _allTransactionsLiveData.postValue(transactions)
-                calculateTotalIncome(transactions)
-                calculateTotalExpense(transactions)
+                calculateTotalIncomeAndExpense(transactions)
                 calculateBalanceDays(transactions)
             } catch (e: Exception) {
-                Log.d("Transactions", "Error getting user transactions: ${e.message.toString()}")
+                handleException("Transactions", "Error getting user transactions", e)
             }
         }
     }
 
-    private fun calculateTotalIncome(transactions: List<Transaction>) {
-        val totalIncome = transactions
-            .filter { transaction -> transaction.type == "Income" }
-            .sumByDouble { transaction -> transaction.amount }
+    private fun calculateTotalIncomeAndExpense(transactions: List<Transaction>) {
+        val totalIncome = transactions.filter { it.type == "Income" }.sumByDouble { it.amount }
+        val totalExpense = transactions.filter { it.type == "Expense" }.sumByDouble { it.amount }
 
         _incomeLiveData.postValue(totalIncome.toString())
-    }
-
-    private fun calculateTotalExpense(transactions: List<Transaction>) {
-        val totalIncome = transactions
-            .filter { transaction -> transaction.type == "Expense" }
-            .sumByDouble { transaction -> transaction.amount }
-
-        _expenseLiveData.postValue(totalIncome.toString())
+        _expenseLiveData.postValue(totalExpense.toString())
     }
 
     private fun calculateBalanceDays(transactions: List<Transaction>) {
@@ -97,11 +86,7 @@ class SummaryViewModel(context: Context) : ViewModel() {
 
             val dailyBalance = balanceMap[dateKey] ?: 0.0
 
-            if (transaction.type == "Income") {
-                balanceMap[dateKey] = dailyBalance + transaction.amount
-            } else if (transaction.type == "Expense") {
-                balanceMap[dateKey] = dailyBalance + transaction.amount
-            }
+            balanceMap[dateKey] = dailyBalance + transaction.amount * if (transaction.type == "Income") 1 else -1
         }
 
         for ((dateKey, dailyBalance) in balanceMap) {
@@ -122,4 +107,7 @@ class SummaryViewModel(context: Context) : ViewModel() {
         _evenBalanceDaysLiveData.postValue(evenDays)
     }
 
+    private fun handleException(tag: String, message: String, exception: Exception) {
+        Log.d(tag, "$message: ${exception.message.toString()}")
+    }
 }

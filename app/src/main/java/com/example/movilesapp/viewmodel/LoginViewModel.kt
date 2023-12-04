@@ -14,7 +14,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class LoginViewModel(context: Context) : ViewModel() {
-    private val userRepository: UserRepository = UserRepositoryImpl(context)
+
+    private val userRepository: UserRepository = UserRepositoryImpl()
     private val authRepository: AuthRepository = AuthRepositoryImpl(context)
 
     private val _errorMessageLiveData = MutableLiveData<String>()
@@ -28,31 +29,15 @@ class LoginViewModel(context: Context) : ViewModel() {
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 setLoading(true)
-                val (success, message) = authRepository.signInWithEmailAndPassword(
-                    email,
-                    password
-                )
+                val (success, message) = authRepository.signInWithEmailAndPassword(email, password)
+
                 if (success) {
                     Log.d("Login", "Login Successful")
-                    if (message != null) {
-                        userRepository.getUserInformation(message)
-                    }
+                    message?.let { userRepository.getUserInformation(it) }
                     onHomeSuccess()
                 } else {
                     Log.d("Login", "Login Failed")
-                    val adjustedErrorMessage = when {
-                        message?.contains("Given String is empty or null") == true -> {
-                            "The email or password are empty"
-                        }
-                        message?.contains("INVALID_LOGIN_CREDENTIALS") == true -> {
-                            "Invalid Credentials"
-                        }
-                        else -> {
-                            message
-                                ?: "Login Failed"
-                        }
-                    }
-                    _errorMessageLiveData.value = adjustedErrorMessage
+                    handleLoginFailure(message)
                 }
             } catch (ex: Exception) {
                 Log.d("Login", "Error Login: ${ex.message}")
@@ -63,7 +48,22 @@ class LoginViewModel(context: Context) : ViewModel() {
         }
     }
 
+    private fun handleLoginFailure(message: String?) {
+        val adjustedErrorMessage = when {
+            message?.contains("Given String is empty or null") == true -> {
+                "The email or password are empty"
+            }
+            message?.contains("INVALID_LOGIN_CREDENTIALS") == true -> {
+                "Invalid Credentials"
+            }
+            else -> {
+                message ?: "Login Failed"
+            }
+        }
+        _errorMessageLiveData.value = adjustedErrorMessage
+    }
+
     private fun setLoading(isLoading: Boolean) {
-        _loading.postValue(isLoading)
+        _loading.value = isLoading
     }
 }

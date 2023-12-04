@@ -14,7 +14,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class HistoryViewModel(private val context: Context) : ViewModel() {
-    private val userRepository: UserRepository = UserRepositoryImpl(context)
+
+    private val userRepository: UserRepository = UserRepositoryImpl()
 
     private val _transactionsLiveData = MutableLiveData<List<Transaction>>()
     val transactionsLiveData: LiveData<List<Transaction>> get() = _transactionsLiveData
@@ -28,15 +29,16 @@ class HistoryViewModel(private val context: Context) : ViewModel() {
     fun getTransactionsOfUser() {
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                if (isNetworkAvailable()){
+                if (isNetworkAvailable()) {
                     _loadingMessageLiveData.value = "Loading..."
                     userRepository.syncTransactionsFirebase()
                 }
+
                 val transactions = userRepository.getTransactionsOfUser()
                 _transactionsLiveData.value = transactions
                 _loadingMessageLiveData.value = "History"
             } catch (e: Exception) {
-                _errorMessageLiveData.value = "Error getting user transactions: ${e.message.toString()}"
+                handleException(e)
             }
         }
     }
@@ -47,5 +49,9 @@ class HistoryViewModel(private val context: Context) : ViewModel() {
         val network = connectivityManager.activeNetwork
         val capabilities = connectivityManager.getNetworkCapabilities(network)
         return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+    }
+
+    private fun handleException(exception: Exception) {
+        _errorMessageLiveData.value = "Error getting user transactions: ${exception.message.toString()}"
     }
 }

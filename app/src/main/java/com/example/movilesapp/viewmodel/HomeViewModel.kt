@@ -13,7 +13,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class HomeViewModel(context: Context) : ViewModel() {
-    private val userRepository: UserRepository = UserRepositoryImpl(context)
+
+    private val userRepository: UserRepository = UserRepositoryImpl()
 
     private val _balanceLiveData = MutableLiveData<String>()
     val balanceLiveData: LiveData<String> get() = _balanceLiveData
@@ -24,7 +25,7 @@ class HomeViewModel(context: Context) : ViewModel() {
                 val transactions = userRepository.getTransactionsOfUser()
                 calculateBalance(transactions)
             } catch (e: Exception) {
-                Log.d("Transactions", "Error getting user transactions: ${e.message.toString()}")
+                handleException("Error getting user transactions", e)
             }
         }
     }
@@ -35,17 +36,17 @@ class HomeViewModel(context: Context) : ViewModel() {
                 userRepository.getBudgets()
                 userRepository.getUserPredictions()
             } catch (e: Exception) {
-                Log.d("HOLA", "Error getting budgets or user predictions: ${e.message.toString()}")
+                handleException("Error getting budgets or user predictions", e)
             }
         }
     }
 
     private fun calculateBalance(transactions: List<Transaction>) {
-        val balance = transactions.sumByDouble { transaction ->
-            transaction.amount
-        }
+        val balance = transactions.sumByDouble(Transaction::amount)
         _balanceLiveData.postValue(balance.toString())
     }
 
-
+    private fun handleException(message: String, exception: Exception) {
+        Log.d("Transactions", "$message: ${exception.message.toString()}")
+    }
 }
