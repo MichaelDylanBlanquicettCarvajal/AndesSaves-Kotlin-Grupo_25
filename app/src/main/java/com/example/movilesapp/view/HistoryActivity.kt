@@ -21,6 +21,7 @@ import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivityHistoryBinding
 import com.example.movilesapp.model.entities.Transaction
 import com.example.movilesapp.view.utilis.ThemeUtils
+import com.example.movilesapp.viewmodel.GenericViewModelFactory
 import com.example.movilesapp.viewmodel.HistoryViewModel
 import com.google.firebase.Timestamp
 import com.google.firebase.storage.FirebaseStorage
@@ -36,7 +37,7 @@ class HistoryActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        viewModel = ViewModelProvider(this).get(HistoryViewModel::class.java)
+        viewModel = ViewModelProvider(this, GenericViewModelFactory(this)).get(HistoryViewModel::class.java)
 
         setupBackButton()
         observeViewModel()
@@ -54,6 +55,10 @@ class HistoryActivity : AppCompatActivity() {
         viewModel.transactionsLiveData.observe(this) { transactions ->
             clearLinearLayout()
             createTransactionViews(transactions)
+        }
+
+        viewModel.loadingMessageLiveData.observe(this) { loadingMessage ->
+            binding.textViewTitle.text = loadingMessage
         }
 
         viewModel.getTransactionsOfUser()

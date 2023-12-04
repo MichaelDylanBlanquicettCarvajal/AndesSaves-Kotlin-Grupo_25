@@ -10,6 +10,7 @@ import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivitySummaryBinding
 import com.example.movilesapp.model.entities.Transaction
 import com.example.movilesapp.view.utilis.ThemeUtils
+import com.example.movilesapp.viewmodel.GenericViewModelFactory
 import com.example.movilesapp.viewmodel.SummaryViewModel
 import java.text.NumberFormat
 import com.github.mikephil.charting.charts.BarChart
@@ -30,7 +31,7 @@ class SummaryActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        viewModel = ViewModelProvider(this).get(SummaryViewModel::class.java)
+        viewModel = ViewModelProvider(this, GenericViewModelFactory(this)).get(SummaryViewModel::class.java)
 
         binding.backButton.setOnClickListener {
             startActivity(Intent(this, HomeActivity::class.java))
