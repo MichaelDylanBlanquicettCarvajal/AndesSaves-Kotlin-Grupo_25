@@ -88,7 +88,7 @@ HomeActivity : AppCompatActivity() {
         }
 
         binding.CardViewAccounts.setOnClickListener {
-            val intent = Intent(this, AccountsActivity::class.java)
+            val intent = Intent(this, NewsActivity::class.java)
             startActivity(intent)
         }
 
