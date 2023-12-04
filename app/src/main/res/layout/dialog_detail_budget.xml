@@ -14,84 +14,79 @@
         android:layout_margin="36dp"
         android:orientation="vertical">
 
+
+        <TextView
+            android:id="@+id/TextViewName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="36dp"
+            android:text="Name"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/TextViewName"
+                android:id="@+id/textViewPercentage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="36dp"
-                android:text="Nombre"
-                android:textSize="28sp"
+                android:text="40%"
+                android:textSize="90sp"
                 android:textStyle="bold" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center">
-
-                <TextView
-                    android:id="@+id/textViewPercentage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="40%"
-                    android:textSize="90sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center">
-
-                <TextView
-                    android:id="@+id/TextViewDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="10/08/2023"
-                    android:textSize="20sp" />
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="100dp"
-                android:gravity="center">
-
-                <TextView
-                    android:id="@+id/TextViewAvailable"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="$ 400 / $ 1000"
-                    android:textSize="30sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="50dp"
-                android:gravity="center">
-
-                <EditText
-                    android:id="@+id/editTextAmount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:hint="Amount"
-                    android:inputType="numberDecimal"
-                    android:maxLength="10"
-                    android:textSize="22sp" />
-            </LinearLayout>
-
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/TextViewDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10/08/2023"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/TextViewAvailable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$ 400 / $ 1000"
+                android:textSize="30sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/editTextAmount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:hint="Amount"
+                android:inputType="numberDecimal"
+                android:maxLength="10"
+                android:textSize="22sp" />
+        </LinearLayout>
+
 
         <Button
             android:id="@+id/buttonAddContribution"
@@ -112,7 +107,7 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="0dp"
             android:layout_weight="1" />
 
         <Button

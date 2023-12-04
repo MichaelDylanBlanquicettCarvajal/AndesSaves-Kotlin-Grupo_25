@@ -5,49 +5,39 @@
     android:id="@+id/RelativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.BudgetActivity">
+    tools:context=".view.SettingActivity">
 
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="36dp"
-
         android:orientation="vertical">
 
 
         <TextView
-            android:id="@+id/TransactionName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="36dp"
-            android:text="Name"
+            android:text="Suggestions"
             android:textSize="28sp"
             android:textStyle="bold" />
 
-
-        <TextView
-            android:id="@+id/TransactionAmount"
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/editTextSuggestions"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="$ -1000000000"
-            android:textSize="40sp"
-            android:textStyle="bold" />
+            android:hint="Enter your suggestions"
+            android:layout_marginBottom="20dp"
+            android:inputType="textMultiLine"
+            android:lines="20" />
 
-
-        <TextView
-            android:id="@+id/TransactionDate"
-            android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/buttonSendSuggestions"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="10/08/2023"
-            android:textSize="20sp" />
-
-
-        <ImageView
-            android:id="@+id/transactionImageView"
-            android:layout_width="290dp"
-            android:layout_height="360dp"
-            android:src="@drawable/ic_baseline_image_search_24" />
+            android:layout_marginBottom="20dp"
+            android:text="Send Suggestions" />
 
 
     </LinearLayout>
