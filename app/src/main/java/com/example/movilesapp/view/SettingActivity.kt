@@ -4,7 +4,12 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
+import com.example.movilesapp.R
 import com.example.movilesapp.databinding.ActivitySettingsBinding
 import com.example.movilesapp.model.UserSingleton
 import com.example.movilesapp.view.utilis.ThemeUtils
@@ -24,7 +29,7 @@ class SettingActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, GenericViewModelFactory(this)).get(SettingViewModel::class.java)
 
         binding.backButton.setOnClickListener {
-            val intent = Intent(this, AccountsActivity::class.java)
+            val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
         }
 
@@ -39,6 +44,25 @@ class SettingActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        binding.SuggestionsLayout.setOnClickListener {
+            openSuggestionDialog()
+        }
+
+    }
+
+    private fun openSuggestionDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_suggestions, null)
+        val builder = AlertDialog.Builder(this)
+        builder.setView(dialogView)
+        val dialog = builder.create()
+
+        val buttonSendSuggestions = dialogView.findViewById<Button>(R.id.buttonSendSuggestions)
+
+        buttonSendSuggestions.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     private fun putNameAndEmailUser() {

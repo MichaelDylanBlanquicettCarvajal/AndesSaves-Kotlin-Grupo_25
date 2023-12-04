@@ -150,17 +150,36 @@
                     android:textSize="24sp" />
             </LinearLayout>
 
-            <Space
+            <LinearLayout
+                android:id="@+id/SuggestionsLayout"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_weight="1" />
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginVertical="30dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_baseline_sticky_note_2_24"
+                    card_view:tint="@color/blue" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Send Suggestion"
+                    android:textStyle="bold"
+                    android:textSize="24sp" />
+            </LinearLayout>
+
 
             <Button
                 android:id="@+id/buttonSignOut"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/red"
-                android:layout_marginBottom="20dp"
+                android:layout_marginVertical="40dp"
                 android:text="sign Out" />
 
         </LinearLayout>
